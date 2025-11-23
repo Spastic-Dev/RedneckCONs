@@ -1,0 +1,36 @@
+// The Billyray jamming away  
+// Programmed by Joseph Aurili
+
+// Define actions
+action ABILLYPLAY_PLAY  0   3   1  1  20
+
+// Define movements
+move BILLYPLAY_STOP
+
+// Define AI states
+ai AIBILLYPLAY_PLAY ABILLYPLAY_PLAY BILLYPLAY_STOP faceplayer   
+
+// Actors ********************************************
+actor BILLYPLAY 10000 ABILLYPLAY_PLAY
+  fall
+
+  // Start and stay with play
+  ifai 0
+  {
+    cstator 257
+    ai AIBILLYPLAY_PLAY
+  }
+  
+  // Billyray takes a hit
+  ifhitweapon
+  {
+    state random_wall_jibs
+    spawn BLOOD
+    ifrnd 64
+    {
+      sound BR_PAIN 
+      break;
+    }
+  }
+enda
+

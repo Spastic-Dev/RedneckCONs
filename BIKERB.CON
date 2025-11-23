@@ -1,0 +1,357 @@
+// The biker on the bike 
+// Programmed by Joseph Aurili
+// and Gary Bradfield
+
+// Define actions
+action ABIKERB_NEUTRAL  0  5  7  1  10
+action ABIKERB_PAIN     35 10 7  1  5
+action ABIKERB_BROKE    -3 1  1  1  1
+
+// Define movements
+move BIKERB_MOVES  300
+move BIKERB_MOVEM  450
+move BIKERB_MOVEF  550
+move BIKERB_STOP
+
+// Define AI states
+ai AIBIKERB_STOPPED ABIKERB_NEUTRAL BIKERB_MOVEM 
+ai AIBIKERB_RUN     ABIKERB_NEUTRAL BIKERB_MOVEF antifaceplayerslow   
+ai AIBIKERB_FACE    ABIKERB_NEUTRAL BIKERB_MOVES faceplayerslow   
+ai AIBIKERB_FOLLOW  ABIKERB_NEUTRAL BIKERB_MOVEF seekplayer faceplayerslow  
+ai AIBIKERB_FIGHT   ABIKERB_NEUTRAL BIKERB_MOVES faceplayerslow 
+ai AIBIKERB_FIGHTS  ABIKERB_NEUTRAL BIKERB_STOP  faceplayerslow 
+ai AIBIKERB_FIGHTB  ABIKERB_NEUTRAL BIKERB_MOVES faceplayerslow   
+ai AIBIKERB_PRUN    ABIKERB_PAIN    BIKERB_MOVEF antifaceplayerslow   
+ai AIBIKERB_PFACE   ABIKERB_PAIN    BIKERB_MOVES faceplayerslow   
+ai AIBIKERB_PFOLLOW ABIKERB_PAIN    BIKERB_MOVEF seekplayer faceplayerslow  
+ai AIBIKERB_PFIGHT  ABIKERB_PAIN    BIKERB_MOVES faceplayerslow 
+ai AIBIKERB_BROKE   ABIKERB_BROKE   BIKERB_STOP  faceplayer
+
+// Actors ********************************************
+actor BIKERB 300 ABIKERB_NEUTRAL
+  fall
+  
+  ifai AIBIKERB_BROKE   
+  {
+  
+  }
+  else
+  {
+    motoloopsnd
+  }
+
+  // Start with biker stopped
+  ifai 0
+  {
+    cstator 257
+    ai AIBIKERB_STOPPED
+    state bikersndrecog  
+  }
+  
+  // Make the next action choice
+  ifai AIBIKERB_STOPPED
+  {
+    ifp palive
+    {
+        ifpdistl 12000
+        {
+          ai AIBIKERB_RUN   
+        }
+        else ifpdistl 24000
+        {  
+          ai AIBIKERB_FACE
+        }
+        else
+        {
+          ai AIBIKERB_FOLLOW
+        }
+    }  
+    // Player has expired
+    else
+    {
+      ai AIBIKERB_RUN     
+    }
+  }
+  else ifai AIBIKERB_RUN
+  {
+    ifcount 15 
+    {   
+      ifrnd 128
+        state bikersndrnd                     
+      else
+        state bikersndrnd   
+      resetcount
+    }
+    
+    ifrnd 45    
+      ai AIBIKERB_STOPPED
+  
+    ifrnd 5
+      ifpdistl 10000
+        ai AIBIKERB_FIGHTS 
+  }
+  else ifai AIBIKERB_FIGHTS
+  {
+    ifcount 2 
+    {   
+      sound AK4
+      shoot RIFLE
+      resetcount
+    }
+    
+    ifrnd 40
+      ifpdistg 7000   
+        ai AIBIKERB_FIGHTB
+  }
+  else ifai AIBIKERB_FIGHTB
+  {
+    ifcount 2 
+    {   
+      sound AK4
+      shoot RIFLE
+      resetcount
+    }
+    
+    ifrnd 10
+      ifpdistg 8000   
+        ai AIBIKERB_STOPPED
+  
+    ifpdistl 5000
+    {
+      ai AIBIKERB_FIGHTS
+    }
+  }
+  else ifai AIBIKERB_FACE
+  {
+    ifcount 15 
+    {   
+      ifrnd 128
+        state bikersndrnd                     
+      else
+        state bikersndrnd   
+      resetcount
+    }
+    
+    ifrnd 10
+      ai AIBIKERB_STOPPED
+    ifrnd 30
+      ai AIBIKERB_FIGHT
+  }
+  else ifai AIBIKERB_FOLLOW
+  {
+    ifcount 15 
+    {   
+      ifrnd 128
+        state bikersndrnd                     
+      else
+        state bikersndrnd   
+      resetcount
+    }
+    
+    ifrnd 20
+      ai AIBIKERB_STOPPED
+  
+    ifpdistl 3000
+    {
+      ai AIBIKERB_RUN
+    }
+  }
+  else ifai AIBIKERB_FIGHT
+  {
+    ifrnd 15
+      ai AIBIKERB_STOPPED
+    
+    ifpdistl 3000
+    {
+      ai AIBIKERB_RUN
+    }
+    
+    ifpdistl 18000
+    {
+      {
+        ifcount 2 
+        {   
+          sound AK4
+          shoot RIFLE
+          resetcount
+        }
+      }
+    }
+  }
+  else ifai AIBIKERB_PFACE
+  {
+    ifactioncount 10 
+    {
+      ai AIBIKERB_FACE
+    }
+  }
+  else ifai AIBIKERB_PRUN
+  {
+    ifactioncount 10 
+    {  
+      ai AIBIKERB_RUN
+    }
+  }
+  else ifai AIBIKERB_PFOLLOW
+  {
+    ifactioncount 10 
+    {
+      ai AIBIKERB_FOLLOW
+    }
+  
+    ifpdistl 3000
+    {
+      ai AIBIKERB_RUN
+    }
+  }
+  else ifai AIBIKERB_PFIGHT
+  {
+    ifactioncount 10 
+    {  
+      ai AIBIKERB_FIGHT
+    }
+  
+    ifpdistl 3000
+    {
+      ai AIBIKERB_RUN
+    }
+  }
+  else ifai AIBIKERB_BROKE
+  {
+    state bf      
+    // You can blow it up
+    strength 0
+    ifhitweapon
+      ifwasweapon RADIUSEXPLOSION
+      {
+        sound SQUISHED
+        guts BIKEJIBA 2
+        guts BIKEJIBB 1
+        guts BIKEJIBC 2
+        ifrnd 128
+          spawn MOTOAMMO
+        killit
+      }
+  } 
+  
+  // Biker takes a hit
+  ifhitweapon
+  {
+    ifai AIBIKERB_BROKE
+      break
+    
+    state random_wall_jibs
+    spawn BLOOD
+    
+    ifrnd 128  
+    {
+      ifrnd 128
+      {
+        sound BK_PAIN1
+      }
+      else ifrnd 128
+      {
+        sound BK_PAIN2 
+      }
+      else
+      {
+        sound BK_PAIN3 
+      }
+    }
+    
+    ifrnd 40    
+    {  
+      ifai AIBIKERB_RUN
+      {
+        ai AIBIKERB_PFACE  
+      }
+      else ifai AIBIKERB_FACE
+      {
+        ai AIBIKERB_PRUN   
+      }
+      else ifai AIBIKERB_FOLLOW
+      {
+        ai AIBIKERB_PRUN   
+      }
+    }
+    else
+    {
+      ifai AIBIKERB_RUN
+      {
+        ai AIBIKERB_PRUN  
+      }
+      else ifai AIBIKERB_FACE
+      {
+        ai AIBIKERB_PFACE   
+      }
+      else ifai AIBIKERB_FOLLOW
+      {
+        ai AIBIKERB_PFOLLOW   
+      }
+      else ifai AIBIKERB_FIGHT
+      {
+        ai AIBIKERB_PFIGHT   
+      }
+    }
+
+    ifdead
+    {
+      // RIP biker    
+      state bikersnddie     
+      sound SQUISHED
+      move BIKERB_STOP 
+      
+      ifrnd 128 
+      { 
+        ifrnd 128
+        {
+          soundonce BK_SCRAT    
+          guts BIKEJIBA 2
+          guts BIKEJIBB 1
+          guts BIKEJIBC 2
+          ifrnd 128
+            spawn MOTOAMMO
+          spawn BIKER      
+          killit       
+        }
+        else
+        {
+          soundonce BK_SCRAT    
+          spawn BIKER      
+          ai AIBIKERB_BROKE         
+        }
+      }
+      else
+      {
+        ifrnd 128  
+        {
+          addkills 1 
+          guts BIKERJIBA 1
+          guts BIKERJIBB 1
+          guts BIKERJIBC 2
+          guts BIKERJIBD 2
+          ai AIBIKERB_BROKE
+        }
+        else
+        {
+          addkills 1 
+          guts BIKEJIBA 2
+          guts BIKEJIBB 1
+          guts BIKEJIBC 2
+          guts BIKERJIBA 1
+          guts BIKERJIBB 1
+          guts BIKERJIBC 2
+          guts BIKERJIBD 2
+          ifrnd 128
+            spawn MOTOAMMO
+          killit
+        }
+      }
+    }
+    break;
+
+    ifrnd 64
+      ai AIBIKERB_FACE
+  }
+enda
+

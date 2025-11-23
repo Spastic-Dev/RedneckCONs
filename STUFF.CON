@@ -1,0 +1,161 @@
+// Shooting windows 
+action  WACOSHOOTER  0 1 1 1 1
+action  WACOSHOOTERA 1 1 1 1 15
+action  WACOSHOOTERB 2 1 1 1 15
+action  WACOSHOOTERC 3 1 1 1 15
+action  WACOSHOOTERD 4 1 1 1 15
+
+ai AIWACOSHOOTER  WACOSHOOTER  0
+ai AIWACOSHOOTERA WACOSHOOTERA 0
+ai AIWACOSHOOTERB WACOSHOOTERB 0
+ai AIWACOSHOOTERC WACOSHOOTERC 0
+ai AIWACOSHOOTERD WACOSHOOTERD 0
+
+useractor enemy WACOWINDER WEAK
+
+  ifai 0
+  {
+    ai AIWACOSHOOTER
+  }
+  
+  ifai AIWACOSHOOTER
+  {
+    ifrnd 8
+    {
+      ifp palive
+        ifcansee
+          ifcanshoottarget
+          {
+            ifpdistl 18000 
+            {
+              ifrnd 64
+                sound GLASSSND
+              sound SHOT6
+            }
+            shoot SHOTGUN
+            lotsofglass 4
+            ifrnd 64
+              ai AIWACOSHOOTERA 
+            else ifrnd 128
+              ai AIWACOSHOOTERB 
+            else ifrnd 128
+              ai AIWACOSHOOTERC 
+            else
+              ai AIWACOSHOOTERD 
+          }
+    }
+  }
+  else ifai AIWACOSHOOTERA  
+  {
+    ifactioncount 1
+    {
+      ai AIWACOSHOOTER
+    }
+  }
+  else ifai AIWACOSHOOTERB  
+  {
+    ifactioncount 1
+    {
+      ai AIWACOSHOOTER
+    }
+  }
+  else ifai AIWACOSHOOTERC  
+  {
+    ifactioncount 1
+    {
+      ai AIWACOSHOOTER
+    }
+  }
+  else ifai AIWACOSHOOTERD  
+  {
+    ifactioncount 1
+    {
+      ai AIWACOSHOOTER
+    }
+  }
+enda
+
+
+// DEPUTY
+// THIS ACTOR IS THE SHERIFF + 5
+define DEPUTY            4357
+
+action DEPUTYWALK    -5  8  5  1  16
+action DEPUTYDIE     99  7  1  1  20
+action DEPUTYDEAD   105  1  1  1  20
+
+move DEPUTYMOVE 20
+
+ai AIDEPUTYWALK DEPUTYWALK DEPUTYMOVE geth // normal sherif walk speed
+ai AIDEPUTYDIE  DEPUTYDIE  0
+ai AIDEPUTYDEAD DEPUTYDEAD 0
+
+useractor enemy DEPUTY 2 DEPUTYWALK
+  fall
+  ifai 0
+  {
+    cstator 257
+    ai AIDEPUTYWALK
+  }
+  ifaction DEPUTYDEAD
+  {
+    strength 0
+    ifhitweapon
+      ifwasweapon RADIUSEXPLOSION
+      {
+        sound SQUISHED
+        state standard_jibs
+        killit
+        break
+      }
+    break
+  }
+  ifai AIDEPUTYDIE
+  {
+    ifactioncount 6
+    {
+      ifrnd 64
+        spawn BLOODPOOL
+      state bf
+      iffloordistl 8
+      move 0
+      action DEPUTYDEAD
+      break
+    }
+  }
+  ifai AIDEPUTYWALK
+  {
+    ifrnd 1
+    {
+      sound CASUL_FIRE
+      shoot RIFLE
+    }
+    // ifrnd 1
+    // {
+    // ifrnd 128
+    // soundonce BLABLA
+    // else ifrnd 128
+    // soundonce BLABLA
+    // else
+    // soundonce BLABLA
+    // }
+    ifactioncount 50
+      ifrnd 8
+        {
+          strength 0
+          ai AIDEPUTYDIE
+        }
+
+  }
+
+  ifhitweapon
+  {
+    spawn BLOOD
+    ifdead
+    {
+      ai AIDEPUTYDIE
+      break
+    }
+  }
+
+enda

@@ -1,0 +1,564 @@
+// The biker  
+// Programmed by Joseph Aurili
+
+// Define actions
+action ABIKER_STAY    0   1  5  1  10
+action ABIKER_PRESTAY 200 1  5  1  10
+action ABIKER_WALK    0   8  5  1  11
+action ABIKER_PSHOOT  54  1  5  1  10
+action ABIKER_SHOOT1  54  6  5  1  10
+action ABIKER_SHOOT2  84  3  5  1  10
+action ABIKER_DIE     99  18 1  1  8
+action ABIKER_DEAD    116 1  1  1  1 
+action ABIKER_PULLGUN 150 7  5  1  15 
+action ABIKER_BUTT    180 4  5  1  8 
+action ABIKER_CRANK   200 6  5  1  20 
+action ABIKER_DIETWO  238 17 1  1  15
+action ABIKER_DEADTWO 254 1  1  1  1     
+action ABIKER_GUNBACK 180 7  5  -1 15
+action ABIKER_PEE    2662 2  1  1  50
+
+// Define movements
+move BIKER_WALKVEL 30
+move BIKER_STOP
+
+// Define AI states
+ai AIBIKER_PREMOVE ABIKER_PRESTAY BIKER_STOP    
+ai AIBIKER_STOPPED ABIKER_STAY    BIKER_STOP 
+ai AIBIKER_FARWALK ABIKER_WALK    BIKER_WALKVEL seekplayer
+ai AIBIKER_WALK    ABIKER_WALK    BIKER_WALKVEL faceplayerslow    
+ai AIBIKER_PSHOOT  ABIKER_PSHOOT  BIKER_WALKVEL faceplayer 
+ai AIBIKER_SHOOT1  ABIKER_SHOOT1  BIKER_WALKVEL faceplayer
+ai AIBIKER_SHOOT2  ABIKER_SHOOT2  BIKER_WALKVEL faceplayer     
+ai AIBIKER_DIE     ABIKER_DIE     BIKER_STOP    faceplayer
+ai AIBIKER_DEAD    ABIKER_DEAD    BIKER_STOP    faceplayer
+ai AIBIKER_PEE     ABIKER_STAY    BIKER_STOP    faceplayer
+ai AIBIKER_PULLGUN ABIKER_PULLGUN BIKER_STOP    faceplayer 
+ai AIBIKER_BUTT    ABIKER_BUTT    BIKER_STOP    faceplayer
+ai AIBIKER_CRANK   ABIKER_CRANK   BIKER_STOP      
+ai AIBIKER_DIETWO  ABIKER_DIETWO  BIKER_STOP    faceplayer
+ai AIBIKER_DEADTWO ABIKER_DEADTWO BIKER_STOP    faceplayer       
+ai AIBIKER_GUNBACK ABIKER_GUNBACK BIKER_STOP    faceplayer                       
+ai AIBIKER_PEE2    ABIKER_PEE     BIKER_STOP    faceplayer 
+
+state bikersndrecog
+  ifrnd 30
+    break
+  else ifrnd 51
+    soundonce BK_HEY
+  else ifrnd 51  
+    soundonce BK_HEYNB
+ends
+
+state bikersndrnd
+  ifrnd 168
+    break
+  else ifrnd 10
+    soundonce BK_BOURB
+  else ifrnd 20  
+    soundonce BK_DIENB
+  else ifrnd 30  
+    soundonce BK_DNTLK
+  else ifrnd 40  
+    soundonce BK_PLEAS
+  else ifrnd 50  
+    soundonce BK_TOHEL
+  else ifrnd 60
+    soundonce BK_ALIVE
+  else ifrnd 70
+    soundonce BK_FUN
+ends
+
+state bikerbsndrnd
+  ifrnd 148
+    break
+  else ifrnd 10
+    soundonce BK_JOYRD
+  else ifrnd 20  
+    soundonce BK_RIDE
+  else ifrnd 30  
+    soundonce BK_ROAD
+  else ifrnd 70
+    soundonce BK_SCRAT
+ends
+
+state bikersnddie
+  ifrnd 128
+    break
+  ifrnd 60
+    globalsound BK_JIB1
+  else ifrnd 128  
+    globalsound BK_JIB2  
+  else
+    globalsound BK_JIB3  
+ends
+
+// Actors ********************************************
+actor BIKER 150 ABIKER_PRESTAY
+  fall
+
+  // Start with biker stopped
+  ifai 0
+  {
+    cstator 257
+    ai AIBIKER_PREMOVE
+  }
+  
+  // If the biker is dead
+  ifai AIBIKER_DEAD
+  {
+    // You can blow him up
+    strength 0
+    ifhitweapon
+      ifwasweapon RADIUSEXPLOSION
+      {
+        sound SQUISHED
+        guts BIKERJIBA 1
+        guts BIKERJIBB 1
+        guts BIKERJIBC 2
+        guts BIKERJIBD 2
+        killit
+      }
+  }
+  // If the biker is dead version 2
+  else ifai AIBIKER_DEADTWO
+  {
+    // You can blow him up
+    strength 0
+    ifhitweapon
+      ifwasweapon RADIUSEXPLOSION
+      {
+        sound SQUISHED
+        guts BIKERJIBA 1
+        guts BIKERJIBB 1
+        guts BIKERJIBC 2
+        guts BIKERJIBD 2
+        killit
+      }
+  }
+  // Make the next pre-move choice
+  else ifai AIBIKER_PREMOVE
+  {
+    ifactioncount 1
+    {
+      ifpdistl 10000 
+      {  
+        ifcansee 
+        {  
+          ifrnd 75
+            ai AIBIKER_PULLGUN 
+        }
+      }
+      ifrnd 64
+        ai AIBIKER_CRANK
+    } 
+  }
+  // Make the next action choice
+  else ifai AIBIKER_STOPPED
+  {
+    ifp pdead
+    {
+      ai AIBIKER_WALK  
+      break
+    }
+    
+    ifp palive
+    {
+      ifactioncount 1
+      {
+        ifpdistl 2000
+        {
+          ifcansee
+            ai AIBIKER_BUTT  
+        }
+        else ifrnd 128    
+        {  
+          ifpdistg 15000 
+            ai AIBIKER_FARWALK 
+          
+          ai AIBIKER_WALK
+        }
+      }
+      break
+    }
+  }
+  else ifai AIBIKER_WALK
+  {
+    ifp pdead
+    {
+      ifpdistl 1000
+        ai AIBIKER_PEE
+    }
+    
+    ifcount 15 
+    {   
+      state bikersndrnd                     
+      resetcount
+    }
+    
+    ifp palive
+    {
+      ifactioncount 8
+      {
+        ifrnd 128
+        {  
+          ifp palive
+            ifpdistl 25000
+              ifcansee
+                ifcanshoottarget
+                  ai AIBIKER_SHOOT1  
+          ai AIBIKER_WALK 
+        }
+        else ifrnd 30    
+          ai AIBIKER_STOPPED
+        else ifrnd 40
+          ai AIBIKER_FARWALK
+        
+        ai AIBIKER_WALK 
+      }
+    }
+  }
+  else ifai AIBIKER_FARWALK
+  {
+    ifp pdead
+    {
+      ai AIBIKER_WALK  
+      break
+    }
+    
+    ifcount 15 
+    {   
+      state bikersndrnd                     
+      resetcount
+    }
+    
+    ifactioncount 8
+    {
+      ifrnd 128
+      {  
+        ifp palive
+          ifpdistl 25000
+            ifcansee
+              ifcanshoottarget
+                ai AIBIKER_SHOOT1  
+        ai AIBIKER_FARWALK 
+      }
+      else ifrnd 40    
+        ai AIBIKER_STOPPED
+      ai AIBIKER_FARWALK 
+    }
+  }
+  else ifai AIBIKER_CRANK
+  {
+    ifrnd 1
+      ifpdistl 8000 
+        soundonce BK_SNORT
+    
+    ifactioncount 6
+    {
+      ifrnd 64
+        ai AIBIKER_PREMOVE    
+    }
+  }
+  else ifai AIBIKER_BUTT
+  {
+    ifcount 15 
+    {   
+      state bikersndrnd                     
+      resetcount
+    }
+    
+    ifactioncount 4
+    {
+      ifpdistl 2500
+      {
+        addphealth -5
+        state lnsndpain
+      }
+
+      ifrnd 128
+      {  
+        ai AIBIKER_PSHOOT    
+      }
+      
+      ai AIBIKER_STOPPED
+    }
+  }
+  else ifai AIBIKER_PULLGUN
+  {
+    ifactioncount 7
+    {
+      ai AIBIKER_PSHOOT    
+    }
+    ifactioncount 2
+    {
+    
+    }  
+    ifactioncount 1
+    {
+      state bikersndrecog 
+    }
+  }
+  else ifai AIBIKER_GUNBACK
+  {
+    ifactioncount 7
+    {
+      ai AIBIKER_PREMOVE    
+    }
+  }
+  else ifai AIBIKER_PSHOOT
+  {
+    ifp pdead
+    {
+      ifpdistl 2000
+        ai AIBIKER_WALK
+    }
+    
+    ifactioncount 1
+    {
+      ai AIBIKER_SHOOT1    
+    }
+  }
+  else ifai AIBIKER_SHOOT1
+  {
+    ifp pdead
+    {
+      ifpdistl 2000
+        ai AIBIKER_WALK
+    }
+    
+    ifcount 15 
+    {   
+      state bikersndrnd                     
+      resetcount
+    }
+    
+    ifactioncount 6
+    {
+      ai AIBIKER_SHOOT2    
+      ifrnd 24
+        ai AIBIKER_GUNBACK 
+    }
+    else ifactioncount 1
+    {
+    
+    }
+    else ifactioncount 0
+    {
+      sound SHOT6
+      shoot SHOTGUN
+      shoot SHOTGUN
+    }
+  }
+  else ifai AIBIKER_SHOOT2
+  {
+    ifactioncount 3
+    {
+      ifrnd 80
+        ai AIBIKER_STOPPED
+      
+      ai AIBIKER_SHOOT1        
+    }
+    else ifactioncount 1
+    {
+     
+    }
+    else ifactioncount 0
+    {
+      sound SHOT6
+      shoot SHOTGUN
+      shoot SHOTGUN
+      shoot SHOTGUN
+    }
+  }
+  else ifai AIBIKER_DIE
+  {
+    ifactioncount 18
+    {
+      // RIP biker    
+      ifrnd 64
+       spawn BLOODPOOL
+      state bf
+      ai AIBIKER_DEAD 
+    }
+    else ifactioncount 13
+    {
+
+    }
+    else ifactioncount 12
+    {
+      iffloordistl 8
+        sound THUD
+    }
+    else ifactioncount 11
+    {
+
+    }
+  }
+  else ifai AIBIKER_DIETWO
+  {
+    ifactioncount 17
+    {
+      // RIP biker version two   
+      ifrnd 64
+        spawn BLOODPOOL
+      state bf
+      ai AIBIKER_DEADTWO 
+      break
+    }
+    else ifactioncount 14
+    {
+
+    }
+    else ifactioncount 13
+    {
+      iffloordistl 8
+        sound THUD
+    }
+    else ifactioncount 12
+    {
+
+    }
+  }
+  else ifai AIBIKER_PEE
+  {
+    sound PEE
+    ai AIBIKER_PEE2  
+  }
+  else ifai AIBIKER_PEE2          
+  {
+    soundonce PEE 
+  }
+  
+  // Biker takes a hit
+  ifhitweapon
+  {
+    ifai AIBIKER_DIE
+      break
+    
+    ifai AIBIKER_DEAD
+      break
+    
+    ifai AIBIKER_DIETWO
+      break
+    
+    ifai AIBIKER_DEADTWO
+      break
+    
+    ifrnd 128
+    {
+      ifrnd 128
+      {
+        sound BK_PAIN1
+      }
+      else ifrnd 128
+      {
+        sound BK_PAIN2 
+      }
+      
+      sound BK_PAIN3 
+    }
+    
+    {
+      ifspritepal 8
+      {
+      
+      }
+      else
+      {
+        state random_wall_jibs  
+        spawn BLOOD
+      }
+      
+      ifrnd 128  
+      {
+        ifrnd 128
+        {
+          sound BK_PAIN1
+        }
+        else ifrnd 128
+        {
+          sound BK_PAIN2 
+        }
+        
+        sound BK_PAIN3 
+      }
+      
+      ifdead
+      {
+        ifspritepal 8
+        {
+          addkills 1
+          killit
+        }
+        
+        state bikersnddie 
+        addkills 1  
+        cstat 0 
+
+        ifwasweapon RADIUSEXPLOSION
+        {
+          sound SQUISHED
+          guts BIKERJIBA 1
+          guts BIKERJIBB 1
+          guts BIKERJIBC 2
+          guts BIKERJIBD 2
+          ifrnd 128
+           spawn SHOTGUNAMMO
+          ai AIBIKER_DIETWO        
+        }
+        else ifwasweapon MOTOHIT
+        {
+          ifmotofast
+          {
+            ifrnd 128
+              spawn SHOTGUNAMMO
+            ai AIBIKER_DIE        
+          }
+          
+          ifrnd 128
+            spawn SHOTGUNAMMO
+          ai AIBIKER_DIE        
+        }
+        else ifwasweapon CROSSBOW
+        {
+          sound SQUISHED
+          guts BIKERJIBA 1
+          guts BIKERJIBB 1
+          guts BIKERJIBC 2
+          guts BIKERJIBD 2
+          ifrnd 128
+            spawn SHOTGUNAMMO
+          ai AIBIKER_DIETWO        
+        }
+        // Other weapon
+        else
+        {
+          ifrnd 128
+            spawn SHOTGUNAMMO
+          ai AIBIKER_DIE        
+        }
+      break
+      }
+      
+      // Biker hurt if not dead
+      ifrnd 128
+      {
+        ifai AIBIKER_PREMOVE 
+        {
+          ai AIBIKER_PULLGUN
+          break
+        }
+        else ifai AIBIKER_CRANK 
+        {
+          ai AIBIKER_PULLGUN
+          break
+        }
+        
+        ai AIBIKER_PSHOOT
+      }
+    }
+  }
+enda
+
+
