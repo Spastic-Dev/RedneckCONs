@@ -1,0 +1,164 @@
+// The pig
+// By Arthur Attila Donavan
+
+action APIGATTACK  0   6  1  1  10
+action APIGWALK    7   6  5  1  5
+action APIGRUN     7   6  5  1  2
+action APIGEAT    38   5  5  1  20
+action APIGLOOKUP 58   2  5  1  10
+action APIGLOOKDN 63   2  5 -1  10
+
+action APIGMESSEDUP  22   4  1  1 10
+
+move PIGWALKVEL 40
+move PIGRUNVEL 80
+move PIGSTOP
+
+ai AIPIGWALK    APIGWALK    PIGWALKVEL  randomangle geth
+ai AIPIGRUN     APIGRUN     PIGRUNVEL   randomangle geth
+ai AIPIGHUNT    APIGWALK    PIGRUNVEL   faceplayersmart   // Pigs are smart
+ai AIPIGATTACK  APIGATTACK  PIGSTOP     faceplayer
+ai AIPIGEAT     APIGEAT     PIGSTOP
+ai AIPIGLOOKUP  APIGLOOKUP  PIGSTOP
+ai AIPIGLOOKDN  APIGLOOKDN  PIGSTOP
+
+
+actor PIGSTAYPUT PIGSTRENGTH ai AIPIGEAT sizeat 16 16 cactor PIG enda
+actor PIGEAT PIGSTRENGTH ai AIPIGEAT cactor PIG enda
+
+// Main code for pig.
+useractor enemy PIG PIGSTRENGTH
+  fall
+
+  ifai 0
+  {
+    cstator 257
+    ai AIPIGEAT
+  }
+  ifpdistl 8192
+  {
+    ifrnd 1
+      sound PIGSOUND4
+  }
+  ifai AIPIGWALK
+  {
+    // Pig walking
+    ifactioncount 34
+      ifrnd 32
+      {
+        ai AIPIGLOOKDN
+        resetactioncount
+        soundonce PIGSOUND3
+      }
+  }
+  else ifai AIPIGEAT
+  {
+    // Pig eating
+    ifactioncount 40
+      ifrnd 8
+      {
+        ai AIPIGLOOKUP
+        resetactioncount
+        soundonce PIGSOUND4
+      }
+  }
+  else ifai AIPIGLOOKUP
+  {
+    // Pig looking up
+    ifactioncount 2
+    {
+      ai AIPIGWALK
+      ifrnd 16
+        soundonce PIGSOUND3
+    }
+  }
+  else ifai AIPIGLOOKDN
+  {
+    // Pig looking down
+    ifactioncount 2
+    {
+      ai AIPIGEAT
+      ifrnd 16
+        soundonce PIGSOUND3
+    }
+  }
+  else ifai AIPIGHUNT
+  {
+    // Pig hunting for player
+    ifcansee
+    {
+      ifpdistl 1024
+      {
+        ai AIPIGATTACK
+      }
+    }
+    else
+      ifrnd 4
+        ai AIPIGWALK
+  }
+  else ifai AIPIGATTACK
+  {
+    // Pig attacking player
+    ifp palive
+    {
+      ifpdistl 1096
+      {
+        ifrnd 8
+        {
+          addphealth PIG_GNAW_AMOUNT
+          state lnsndpain
+        }
+        ifrnd 128
+          soundonce PIGSOUND6
+        else
+          soundonce PIGSOUND7
+      }
+      else
+        ai AIPIGHUNT
+    }
+    else
+      ai AIPIGWALK
+  }
+
+  ifrnd 1
+    ifrnd 128
+      sound PIGSOUND3
+
+  ifhitweapon
+  {
+    spawn BLOOD
+    ifdead
+    {
+      move PIGSTOP
+      addkills 1
+      // sound SQUISHED
+      sound PIGSOUND5
+      guts JIBS2 1
+      guts JIBS3 2
+      guts JIBS4 3
+      guts JIBS5 2
+      guts JIBS6 3
+      killit
+    }
+    else
+    {
+      ifrnd 128
+        soundonce PIGSOUND1
+      else
+        soundonce PIGSOUND2
+      /*
+      // You made the pig angry, and he is going to hunt you down
+      // But first make 'em laugh
+      ifrnd 64
+        sound FART1
+      else ifrnd 64
+        sound FART2
+      else ifrnd 64
+        sound FART3
+      else ifrnd 64
+        sound FART4
+      */
+      ai AIPIGHUNT
+    }
+  }
+enda

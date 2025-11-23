@@ -1,0 +1,136 @@
+// The Hen
+
+define HEN_NORMAL_STRENGTH    5
+define HEN_TOUGHER_STRENGTH  12
+define HEN_DAMAGE_TO_PLAYER  -1
+
+// Define actions
+action HEN_ANIMATIONS  0  7  5  1  7
+action HEN_FROZEN      1  1  1  1  1
+// action HEN2_ANIMATIONS 36 7  5  1  14
+
+// Define movements
+move HEN_WALK     32
+move HEN_RUN      48
+move HEN_RUN_FAST 72
+move HEN_STOPPED
+
+// Define AI states
+ai AIHEN_BOUNCE HEN_ANIMATIONS HEN_WALK     fleeenemy
+ai AIHEN_RUN    HEN_ANIMATIONS HEN_RUN      fleeenemy
+ai AIHEN_FAST   HEN_ANIMATIONS HEN_RUN_FAST dodgebullet
+ai AIHEN_PISSED HEN_ANIMATIONS HEN_RUN      faceplayer
+
+// States (subroutines) ******************************
+
+// Actors ********************************************
+// useractor enemy HEN HEN_NORMAL_STRENGTH
+useractor enemy HEN HEN_TOUGHER_STRENGTH
+  fall
+
+  ifai 0
+  {
+    cstator 257
+    ifspritepal 35
+    {
+      strength 150
+      ai AIHEN_PISSED
+    }
+    else
+      ai AIHEN_BOUNCE
+  }
+
+  ifai AIHEN_PISSED
+  {
+    ifpdistl 1024
+    {
+      ifrnd 128
+        soundonce CHKNFLAP
+
+      ifspritepal 35
+      {
+        ifactioncount 10
+        {
+          resetactioncount
+          ifrnd 64
+            addphealth -10
+        }
+      }
+      else ifrnd 128
+      {
+        addphealth HEN_DAMAGE_TO_PLAYER
+        ai AIHEN_BOUNCE
+      }
+    }
+  }
+
+  ifrnd 1
+  {
+    ifrnd 8
+    {
+      ifpdistl 8192
+      {
+        sound CHKN_2
+      }
+    }
+    else
+    {
+      ifrnd 16
+      {
+        ifrnd 128
+          sound CHKNFLAP
+        else
+          sound CHKN_1
+      }
+    }
+  }
+
+  ifspritepal 35
+    nullop
+  else
+  {
+    ifcount 48
+      ifrnd 16
+        ai AIHEN_BOUNCE
+
+    ifpdistl 1024
+    ifrnd 16
+    {
+      sound CHKNFLAP
+      ifrnd 128
+        ai AIHEN_RUN
+      else
+        ai AIHEN_FAST
+    }
+  }
+
+  ifhitweapon
+  {
+    feathers 5
+    ifdead
+    {
+      ifwasweapon CROWBAR
+      {
+        guts JIBS1 1
+        addkills 1
+        feathers 8
+        sound CHIKDETH
+        killit
+        break
+      }
+      else
+      {
+        guts JIBS1 1
+        addkills 1
+        feathers 8
+        sound CHIKDETH
+        killit
+        break
+      }
+    }
+    else
+    {
+      ai AIHEN_PISSED
+    }
+  }
+enda

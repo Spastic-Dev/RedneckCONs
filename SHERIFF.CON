@@ -1,0 +1,426 @@
+// The Sheriff Lester T. Hobbes
+// By Arthur Attila Donavan
+
+// Tiles starting positions for Sheriff
+// LTH       4352  actor - Tile to be used in MAKEMAP
+// LTHSTRAFE 4395
+// LTHLOAD   4430
+// LTHDIE    4456
+
+// Local defines
+define LTHSNDAMB 16
+
+// Define actions
+action ALTHWALK    0  8  5  1  16
+action ALTHRUN     0  8  5  1  10
+action ALTHSTRAFE 43  6  5  1  20
+action ALTHLOAD1  78  1  5  1  20
+action ALTHLOAD2  83  2  5  1  20
+action ALTHLOAD3  93  2  5  1  20
+action ALTHDIE   104  7  1  1  20
+action ALTHDEAD  110  1  1  1  20
+
+
+// Define movements
+move LTHWALKVEL    30
+move LTHRUNVEL     80
+move LTHDODGEVEL  200
+move LTHSTOP
+
+// Define AI states
+ai AILTHHUNT    ALTHWALK    LTHWALKVEL  seekplayer
+ai AILTHATTACK  ALTHWALK    LTHWALKVEL  faceplayer
+ai AILTHDODGE   ALTHSTRAFE  LTHDODGEVEL dodgebullet geth
+// ai AILTHFEAR    ALTHRUN     LTHRUNVEL   fleeenemy dodgebullet
+ai AILTHLOAD    ALTHLOAD1   LTHSTOP
+ai AILTHSTRAFE  ALTHSTRAFE  LTHSTOP     faceplayer
+ai AILTHSTRAFEL ALTHSTRAFE  LTHSTOP     faceplayer
+ai AILTHSTRAFER ALTHSTRAFE  LTHSTOP     faceplayer
+ai AILTHDIE     ALTHDIE     LTHSTOP
+ai AILTHDEAD    ALTHDEAD    LTHSTOP
+
+// States (subroutines) ******************************
+state lthload
+  ifaction ALTHLOAD1
+  {
+    ifactioncount 1
+      action ALTHLOAD2
+  }
+  else ifaction ALTHLOAD2
+  {
+    ifactioncount 10
+      action ALTHLOAD3
+  }
+  else ifaction ALTHLOAD3
+  {
+    ifactioncount 2
+    {
+      ifrnd 128
+      {
+        ifcansee
+          ai AILTHSTRAFE
+        else
+          ai AILTHHUNT
+      }
+      else
+        ai AILTHHUNT
+    }
+  }
+ends
+
+state lthattack
+  ifcount 5
+  {
+    ifcount 7
+    {
+      ifcount 13
+      {
+        ifcount 15
+          resetcount
+        else ifcount 14
+        {
+          shoot RIFLE
+          sound CASUL_FIRE
+        }
+      }
+      else ifcount 12
+      {
+        shoot RIFLE
+        sound CASUL_FIRE
+      }
+    }
+    else ifcount 6
+    {
+      shoot RIFLE
+      sound CASUL_FIRE
+    }
+  }
+  else ifcount 4
+  {
+    shoot RIFLE
+    sound CASUL_FIRE
+  }
+ends
+
+/*
+state lthfear
+  ifcansee
+    nullop
+  else
+  {
+    // When the Sheriff can't see you then reload him up on health.
+    ifactioncount 20
+    {
+      addstrength 5
+      resetactioncount
+    }
+  }
+
+  // When the Sheriff has enough health, he then reloads his guns,
+  // and comes after you.
+  ifactorhealthg 100
+    ai AILTHLOAD
+ends
+*/
+
+state lthdeath
+  ifactioncount 7
+  {
+    ifrnd 64
+      spawn BLOODPOOL
+    state bf
+    iffloordistl 8
+      sound THUD
+    ai AILTHDEAD
+  }
+ends
+
+state lthsndrecog
+  ifrnd 51
+    soundonce SF_THLAW
+  else ifrnd 64
+    soundonce SF_TLAW2
+  else ifrnd 85
+    soundonce SF_GETYA
+  else ifrnd 128
+    soundonce SF_ATTN
+  else
+    soundonce SF_NAME
+ends
+
+state lthsndload
+  ifrnd 85
+    soundonce SF_RLOAD
+  else ifrnd 128
+    soundonce SF_RLOD2
+  else
+    state lthsndrecog
+ends
+
+state lthsnddie
+  ifrnd 85
+    soundonce SF_DETH1
+  else ifrnd 128
+    soundonce SF_DETH2
+  else
+    soundonce SF_DETH3
+ends
+
+state lthsndpain
+  ifrnd 85
+    soundonce SF_PAIN1
+  else ifrnd 128
+    soundonce SF_PAIN2
+  else
+    soundonce SF_PAIN3
+ends
+
+state lthsndambient
+  ifspritepal 0
+  {
+    ifrnd 21
+      soundonce SF_ATTN
+    else ifrnd 23
+      soundonce SF_FREZ2
+    else ifrnd 26
+      soundonce SF_GETYA
+    else ifrnd 28
+      soundonce SF_HANDS
+    else ifrnd 32
+      soundonce SF_HEY
+    else ifrnd 36
+      soundonce SF_HOLD
+    else ifrnd 43
+      soundonce SF_LAFF1
+    else ifrnd 51
+      soundonce SF_NAME
+    else ifrnd 64
+      soundonce SF_OVER
+    else ifrnd 85
+      soundonce SF_SHOOT
+    else ifrnd 128
+      soundonce SF_THLAW
+    else
+      soundonce SF_TLAW2
+  }
+ends
+
+// Actors ********************************************
+// actor LTHSTAYPUT LTHSTRENGTH ai AILTHHUNT cactor LTH enda
+
+// Main code for Sheriff.
+actor LTH LTHSTRENGTH ALTHWALK
+  fall
+
+  ifai 0
+  {
+    cstator 257
+    ai AILTHHUNT
+    state lthsndrecog
+  }
+
+/*
+  ifai AILTHFEAR                  // Fear the player, he almost killd euu *****
+  {
+    state lthfear
+    state lthattack
+  }
+  else
+*/
+  ifai AILTHHUNT                  // Hunt down the player and kill 'im ********
+  {
+    ifcansee
+      ifcanshoottarget
+        ai AILTHATTACK
+  }
+  else ifai AILTHATTACK           // Hey the hunter can now see the player ****
+  {
+    ifcount 2
+      nullop
+    else ifcount 1
+    {
+      ifrnd LTHSNDAMB
+      {
+        ifdead
+          nullop
+        else
+        {
+          ifrnd 64
+            state lthsndambient
+        }
+      }
+    }
+
+    state lthattack
+    ifactioncount 12
+      ai AILTHLOAD
+  }
+  else ifai AILTHSTRAFE           // Select strafe ****************************
+  {
+    ifrnd 128
+      ai AILTHSTRAFEL
+    else
+      ai AILTHSTRAFER
+  }
+  else ifai AILTHSTRAFEL          // Strafe left ******************************
+  {
+    ifcount 2
+      nullop
+    else ifcount 1
+    {
+      ifrnd LTHSNDAMB
+      {
+        ifdead
+          nullop
+        else
+        {
+          ifrnd 64
+            state lthsndambient
+        }
+      }
+    }
+
+    strafeleft
+    state lthattack
+    ifactioncount 12
+      ai AILTHLOAD
+  }
+  else ifai AILTHSTRAFER          // Strafe right *****************************
+  {
+    ifcount 2
+      nullop
+    else ifcount 1
+    {
+      ifrnd LTHSNDAMB
+      {
+        ifdead
+          nullop
+        else
+        {
+          ifrnd 64
+            state lthsndambient
+        }
+      }
+    }
+
+    straferight
+    state lthattack
+    ifactioncount 12
+      ai AILTHLOAD
+  }
+  else ifai AILTHLOAD             // Load up dem guns *************************
+  {
+    ifcount 2
+      nullop
+    else ifcount 1
+      state lthsndload
+    state lthload
+  }
+  else ifai AILTHDODGE            // Dodge incomming **************************
+  {
+    ifactioncount 4
+      ifrnd 128
+        ai AILTHHUNT
+      else
+        ai AILTHLOAD
+  }
+  else ifai AILTHDIE              // Do the die thing *************************
+  {
+    ifcount 2
+      nullop
+    else ifcount 1
+      state lthsnddie
+
+    ifactioncount 7
+    {
+      ifrnd 64
+        spawn BLOODPOOL
+      state bf
+      iffloordistl 8
+        sound THUD
+      ai AILTHDEAD
+    }
+  }
+  else ifai AILTHDEAD             // Do the not sentient thing ****************
+  {
+    cstat 0
+    strength 0
+    ifhitweapon
+      ifwasweapon RADIUSEXPLOSION
+      {
+        spawn AMMO
+        spawn AMMO
+        spawn FIRSTGUNSPRITE
+        spawn FIRSTGUNSPRITE
+        move LTHSTOP
+        addkills 1
+        sound SQUISHED
+        guts JIBS2 1
+        guts JIBS3 2
+        guts JIBS4 3
+        guts JIBS5 2
+        guts JIBS6 3
+        state jib_sounds
+        killit
+      }
+    break
+  }
+
+  ifhitweapon
+  {
+    spawn BLOOD
+    ifdead
+    {
+      ifai AILTHDEAD
+        break
+      else ifai AILTHDIE
+        nullop
+      else
+        ai AILTHDIE
+    }
+    else
+    {
+      // You hit the Sheriff
+      ifwasweapon CROWBAR
+      {
+        ifrnd 32
+          spawn AMMO
+      }
+
+      // You made the Sheriff angry, and he is going to hunt you down
+      ifai AILTHLOAD          // Allow the coger to load unhindered
+        nullop
+      else ifai AILTHDODGE    // Allow the geezer to continue to dodge
+        nullop
+      else
+        ai AILTHHUNT          // Hey! He's commin' after you
+/*
+      // The Sheriff's health is low, so fear the player
+      ifai AILTHFEAR
+        nullop    // Don't retrigger fear
+      else ifactorhealthl 50
+      {
+        ai AILTHFEAR
+      }
+*/
+      ifrnd 64
+        state lthsndpain
+    }
+  }
+
+  ifbulletnear
+  {
+    ifdead
+      nullop
+    else ifai AILTHLOAD
+      nullop
+    else
+    {
+      ifrnd 24
+        ai AILTHDODGE
+    }
+  }
+
+enda
+
+

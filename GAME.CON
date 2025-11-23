@@ -1,0 +1,1546 @@
+/*
+--------------------------------------------------------------------------------
+Redneck Rampage GAME.CON file.
+--------------------------------------------------------------------------------
+
+IMPORTANT NOTICE IF YOU USE MODIFIED .CON FILES
+
+If you are playing a MULTIPLAY game and you are using
+*modified* .CON files then each multiplayer must be
+using the EXACT SAME .CON files, or the game will
+get out of sync and/or develop interesting problems.
+
+Xatrix encourages you to experiment freely with the parameters
+contained in this file, and to share your discoveries with the rest
+of the world.  However, BE ADVISED that Xatrix does NOT offer
+any technical support on how to use this file or other user-modifiable
+features of this game.  Do NOT call Xatrix or Interplay
+for advice or help with this subject.
+
+You make modifications to this and other files at your own risk.
+It is recommended that you first make a backup copy of this, or
+any .CON files before making any changes.
+--------------------------------------------------------------------------------
+*/
+
+include DEFS.CON
+include USER.CON
+
+action ANULLACTION 0
+
+// Play a randomly chosen sound or phrase
+state jib_sounds
+  ifrnd SWEARFREQUENCY
+  {
+    ifrnd 128
+    {
+      ifrnd 128
+      {
+        ifrnd 128
+        {
+          ifrnd 128
+          {
+            ifrnd 128
+              globalsound JIBBED12
+            else
+              globalsound JIBBED1
+          }
+          else
+            globalsound JIBBED9
+        }
+        else
+        {
+          ifrnd 128
+          {
+            ifrnd 128
+              globalsound LN_FLYOP
+            else
+              globalsound JIBBED2
+          }
+          else
+            globalsound WUSSLAF
+        }
+      }
+      else
+      {
+        ifrnd 128
+        {
+          ifrnd 128
+            globalsound LN_SHTHD
+          else
+            globalsound JIBBED5
+        }
+        else
+            globalsound LN_RODE
+      }
+    }
+    else
+    {
+      ifrnd 128
+      {
+        ifrnd 128
+        {
+          ifrnd 128
+            globalsound JIBBED11
+          else
+            globalsound JIBBED13
+        }
+        else
+        {
+          ifrnd 128
+            globalsound JIBBED3
+          else
+            globalsound JIBBED8
+        }
+      }
+      else
+      {
+        ifrnd 128
+        {
+          ifrnd 128
+            globalsound JIBBED6
+          else
+            globalsound JIBBED4
+        }
+        else
+        {
+          ifrnd 128
+            globalsound JIBBED10
+          else
+            globalsound JIBBED7
+        }
+      }
+    }
+  }
+ends
+
+// Display a nice gory selection of
+// splashing blood, and body parts
+state standard_jibs
+  guts JIBS2 1
+  guts JIBS3 2
+  guts JIBS4 3
+  guts JIBS5 2
+  guts JIBS6 3
+  ifrnd 6
+  {
+    guts JIBS1 1
+    spawn BLOODPOOL
+  }         // spine
+  state jib_sounds
+ends
+
+state minion_shitshower
+  guts MINJIBA 1
+  guts MINJIBB 1
+  guts MINJIBC 1
+ends
+
+state standard_minionjibs
+  guts JIBS2 1
+  guts JIBS3 2
+  guts MINJIBA 1
+  guts MINJIBB 1
+  guts MINJIBC 1
+  ifrnd 6
+  {
+    guts JIBS1 1
+    spawn BLOODPOOL
+  }         // spine
+ends
+
+move RESPAWN_ACTOR_FLAG
+
+state jibfood
+  sound SQUISHED
+  guts JIBS6 3
+  killit
+ends
+
+state rf
+  ifrnd 128
+    cstat 4
+  else
+    cstat 0
+ends
+
+state nf
+  cstat 0
+ends
+
+state bf
+  cstat 0
+ends
+
+action BURNING_FLAME  0   12   1   1   2
+move BURNING_VELS
+
+state burningstate
+
+  sleeptime 300
+
+  ifspawnedby BURNING
+  {
+    ifgapzl 16
+      break
+  }
+  else ifspawnedby BURNING2
+  {
+    ifgapzl 16
+      break
+  }
+
+  ifpdistg 10240
+    break
+
+  ifcount 128
+  {
+    sizeto 8 8
+    sizeto 8 8
+    ifcount 192
+      killit
+  }
+  else
+  {
+    ifmove 0
+      move BURNING_VELS
+
+    sizeto 52 52
+
+    ifp palive
+      ifpdistl 844
+        ifrnd 32
+          ifcansee
+    {
+      soundonce LN_PAIN8
+      addphealth -1
+      palfrom 24 16
+    }
+  }
+
+ends
+
+actor BURNING WEAK BURNING_FLAME
+  state burningstate
+enda
+
+actor BURNING2 WEAK BURNING_FLAME
+  state burningstate
+enda
+
+/*
+state steamcode
+  ifpdistl 8192
+    soundonce STEAM_HISSING
+
+  ifcount 20
+    {
+      resetcount
+      ifp palive
+        ifpdistl 1024
+      {
+        addphealth -1
+        palfrom 16 16
+      }
+    }
+  else
+  {
+    ifspawnedby STEAM
+      break
+    else
+      ifspawnedby CEILINGSTEAM
+        break
+
+    sizeto 24 24
+  }
+ends
+
+action STEAMFRAMES    0     5     1     1     1
+actor STEAM 0 STEAMFRAMES
+  state steamcode
+enda
+
+actor CEILINGSTEAM 0 STEAMFRAMES
+  state steamcode
+enda
+*/
+
+actor WATERBUBBLEMAKER 0 0 randomangle
+  ifpdistl 3084
+    ifrnd 24
+      spawn WATERBUBBLE
+enda
+
+action BUBBLE
+action CRACKEDBUBBLE  1
+move BUBMOVE       -10 -36
+move BUBMOVEFAST     -10 -52
+
+actor WATERBUBBLE 0 BUBBLE BUBMOVE getv geth randomangle
+
+  ifaction CRACKEDBUBBLE
+  {
+    ifinwater
+      ifrnd 192
+        killit
+    ifactioncount 7
+      killit
+  }
+  else
+  {
+    ifcount 4
+    {
+      ifrnd 192
+        move BUBMOVE getv geth randomangle
+      else
+        move BUBMOVEFAST getv geth randomangle
+      resetcount
+    }
+
+    ifonwater
+    {
+      iffloordistl 8
+        action CRACKEDBUBBLE
+    }
+    else
+      ifactioncount 40
+        action CRACKEDBUBBLE
+  }
+enda
+
+
+move SMOKEVEL 8 -16
+move ENGINE_SMOKE 64 -64
+move SMOKESHOOTOUT -192
+action SMOKEFRAMES 0 4 1 1 10
+
+actor SMALLSMOKE 0 SMOKEFRAMES
+  ifmove 0
+  {
+    ifspawnedby SECTOREFFECTOR
+      move ENGINE_SMOKE geth getv
+    else
+      move SMOKEVEL geth getv faceplayer
+    ifspawnedby CROSSBOW
+      cstat 2
+  }
+  ifpdistl 1596
+    ifspawnedby CROSSBOW
+      killit
+  ifactioncount 4
+    killit
+enda
+
+move SPAWNED_BLOOD
+
+state random_ooz
+  ifrnd 128
+    spawn OOZ2
+  else
+    spawn OOZ
+ends
+
+action EXPLOSION_FRAMES 0 20 1 1  4
+actor EXPLOSION2 1 EXPLOSION_FRAMES
+  ifactioncount 20
+    killit
+enda
+
+action EXPLOSION3_FRAMES -1 20 1 1 4
+actor EXPLOSION3 1 EXPLOSION3_FRAMES
+  sizeat 64 64
+  ifactioncount 20
+    killit
+enda
+
+actor EXPLOSION2BOT 1 EXPLOSION_FRAMES
+  ifactioncount 20
+    killit
+enda
+
+action RIP_F 0 8 1 1 1
+actor FORCERIPPLE 0 RIP_F
+  ifactioncount 8
+    killit
+enda
+
+// This actors animation is used to
+// indicate that something is
+// being respawned
+action TRANSFOWARD 0  6  1  1  2
+action TRANSBACK   5  6  1 -1  2
+actor TRANSPORTERSTAR 0 TRANSFOWARD
+  ifaction TRANSFOWARD
+  {
+    ifactioncount 6
+      action TRANSBACK
+  }
+  else
+    ifactioncount 6
+      killit
+enda
+
+action BEAMFOWARD  0  4  1  1  9
+actor TRANSPORTERBEAM 0 BEAMFOWARD
+  sizeto 32 64
+  sizeto 32 64
+  sizeto 32 64
+  ifactioncount 4
+    killit
+enda
+
+/*
+// This is for Juke Box
+action ASPEAKERBROKE 1
+useractor notenemy SPEAKER
+  ifaction 0
+  {
+    ifhitweapon
+    {
+      stopsound BAR_MUSIC
+      soundonce STORE_MUSIC_BROKE
+      action ASPEAKERBROKE
+    }
+    else
+    {
+      soundonce BAR_MUSIC
+      cstat 257
+    }
+  }
+enda
+*/
+
+// This is for TESLA RAY
+useractor notenemy TESLA
+  ifaction 0
+  {
+    ifpdistl 1024 {
+       addphealth -2
+    }
+    soundonce TESLARC
+    // cstat 257
+    cstat 17
+  }
+enda
+
+// Play a sound when player picks up item
+// then delete sprite from map
+// OR setup to be respawned
+state getcode
+  ifactor ECLAIRHEALTH
+    globalsound YEHAA16 // GETECLAIRHEALTH
+  else
+    globalsound JUG
+  palfrom 16 0 32
+  ifrespawn
+  {
+    move RESPAWN_ACTOR_FLAG
+    spawn RESPAWNMARKERRED
+    cstat 32768
+  }
+  else
+    killit
+ends
+
+// Play a random sound when player
+// picks up a weapon
+state randgetweapsnds
+  ifrnd 64
+    globalsound LN_HUSH
+  else
+    ifrnd 96
+      globalsound LN_HOLD
+  else
+    ifrnd 128
+      globalsound LN_HOTDM
+  else
+    ifrnd 140
+      globalsound LN_STINK
+  else
+    ifrnd 128
+      globalsound LN_BBQ
+  else
+    globalsound LN_SCREW
+ends
+
+// Play a random sound when player
+// picks up a weapon
+// Then either setup weapon to be respawned
+// OR delete sprite from map
+state getweaponcode
+
+  state randgetweapsnds
+
+  palfrom 32 0 32
+  ifgotweaponce 1
+    break
+  ifrespawn
+  {
+    move RESPAWN_ACTOR_FLAG
+    spawn RESPAWNMARKERRED
+    cstat 32768
+  }
+  else
+    killit
+ends
+
+// if count > RESPAWNITEMTIME
+// Play the TRANSPORTERSTAR animation with
+// the TELEPORTER sound effect
+state respawnit
+  ifcount RESPAWNITEMTIME
+  {
+    spawn TRANSPORTERSTAR
+    move 0
+    cstat 0
+    sound TELEPORT
+  }
+ends
+
+// Play a sound when player picks up item
+// then delete sprite from map
+state quikget
+  ifactor ECLAIRHEALTH
+    globalsound YEHAA16 // GETECLAIRHEALTH
+  else
+    globalsound JUG
+  palfrom 16 0 32
+  killit
+ends
+
+// Play a sound from randgetweapsnds
+// then delete sprite from map
+state quikweaponget
+  state randgetweapsnds
+  palfrom 32 0 32
+  ifgotweaponce 1
+    break
+  killit
+ends
+
+// Moonshine make the player faster, stronger,
+// and less susceptable to damage.
+// Studies have proven this to be true
+// Play a sound when player picks up item
+// then delete sprite from map
+// OR setup to be respawned
+actor MOONSHINE
+  fall
+  ifmove RESPAWN_ACTOR_FLAG
+    state respawnit
+  else ifp palive
+    ifcount 6
+      ifpdistl RETRIEVEDISTANCE
+        ifpinventory GET_MOONSHINE MOONSHINE_AMOUNT
+          ifcanseetarget
+          {
+             addinventory GET_MOONSHINE MOONSHINE_AMOUNT
+             quote 37
+             ifspawnedby MOONSHINE
+                state getcode
+             else
+                state quikget
+          }
+enda
+
+// Boots are used to walk through toxic water
+// Play a sound when player picks up item
+// then delete sprite from map
+// OR setup to be respawned
+actor BOOTS
+  fall
+  ifmove RESPAWN_ACTOR_FLAG
+    state respawnit
+  else
+    ifp palive
+      ifcount 6
+        ifpdistl RETRIEVEDISTANCE
+          ifpinventory GET_BOOTS BOOT_AMOUNT
+            ifcanseetarget
+            {
+               addinventory GET_BOOTS BOOT_AMOUNT
+               quote 6
+               ifspawnedby BOOTS
+                  state getcode
+               else
+                  state quikget
+            }
+enda
+
+actor COWPIE
+  fall
+  ifmove RESPAWN_ACTOR_FLAG
+    state respawnit
+  else
+    ifp palive
+      ifcount 6
+        ifpdistl RETRIEVEDISTANCE
+          ifpinventory GET_COWPIE COWPIE_AMOUNT
+            ifcanseetarget
+            {
+               addinventory GET_COWPIE COWPIE_AMOUNT
+               quote 88
+               ifspawnedby COWPIE
+                  state getcode
+               else
+                  state quikget
+            }
+enda
+
+actor BEER
+  fall
+  ifmove RESPAWN_ACTOR_FLAG
+    state respawnit
+  else
+    ifp palive
+      ifcount 6
+        ifpdistl RETRIEVEDISTANCE
+          ifpinventory GET_BEER BEER_AMOUNT
+            ifcanseetarget
+            {
+               addinventory GET_BEER BEER_AMOUNT
+               quote 91
+               ifspawnedby BEER
+                  state getcode
+               else
+                  state quikget
+            }
+enda
+
+// Allows player to breathe under water
+// Play a sound when player picks up item
+// then delete sprite from map
+// OR setup to be respawned
+actor SNORKLE
+  fall
+  ifmove RESPAWN_ACTOR_FLAG
+    state respawnit
+  else
+    ifp palive
+      ifcount 6
+        ifpdistl RETRIEVEDISTANCE
+          ifpinventory GET_SCUBA SCUBA_AMOUNT
+            ifcanseetarget
+            {
+              addinventory GET_SCUBA SCUBA_AMOUNT
+              quote 39
+              ifspawnedby SNORKLE
+                state getcode
+              else
+                state quikget
+            }
+enda
+
+// Keys are used to open locked doors
+// that lead into different levels of the
+// map
+// Play a sound when player picks up item
+// then delete sprite from map
+// OR setup to be respawned
+actor DOORKEY
+  fall
+  ifmove RESPAWN_ACTOR_FLAG
+    state respawnit
+  else
+    ifp palive
+      ifpdistl RETRIEVEDISTANCE
+        ifcount 6
+          // ifcanseetarget
+          {
+            ifpinventory GET_KEYS 0
+              break
+            addinventory GET_KEYS 1
+            quote 43
+            state getcode
+          }
+enda
+
+// Extra ammo for CASUL
+// Play a sound when player picks up item
+// then delete sprite from map
+// OR setup to be respawned
+actor AMMO
+  fall
+  ifmove RESPAWN_ACTOR_FLAG
+    state respawnit
+  else
+    ifp palive
+      ifpdistl RETRIEVEDISTANCE
+        ifcount 6
+          ifcanseetarget
+          {
+            addammo CASUL_WEAPON CASULAMMOAMOUNT
+            quote 65
+            ifspawnedby AMMO
+              state getcode
+            else
+              state quikget
+          }
+enda
+
+// Extra ammo for TEATGUN
+// Play a sound when player picks up item
+// then delete sprite from map
+// OR setup to be respawned
+actor TEATAMMO
+  fall
+  ifmove RESPAWN_ACTOR_FLAG
+    state respawnit
+  else
+    ifp palive
+      ifpdistl RETRIEVEDISTANCE
+        ifcount 6
+          ifcanseetarget
+          {
+            addammo TEATGUN_WEAPON 50
+            quote 47
+            ifspawnedby TEATAMMO
+              state getcode
+            else
+              state quikget
+          }
+enda
+
+
+// Extra ammo for SAWBLADE GUN
+// Play a sound when player picks up item
+// then delete sprite from map
+// OR setup to be respawned
+actor BLADEAMMO
+  fall
+  ifmove RESPAWN_ACTOR_FLAG
+    state respawnit
+  else
+    ifp palive
+      ifpdistl RETRIEVEDISTANCE
+        ifcount 6
+          ifcanseetarget
+          {
+            addammo THROWSAW_WEAPON 20
+            quote 48
+            ifspawnedby BLADEAMMO
+              state getcode
+            else
+              state quikget
+          }
+enda
+
+
+// Extra ammo for shotgun
+// Play a sound when player picks up item
+// then delete sprite from map
+// OR setup to be respawned
+actor SHOTGUNAMMO
+  fall
+  ifmove RESPAWN_ACTOR_FLAG
+    state respawnit
+  else
+    ifp palive
+      ifcount 6
+        ifpdistl RETRIEVEDISTANCE
+          ifcanseetarget
+          {
+            addammo SHOTGUN_WEAPON SHOTGUNAMMOAMOUNT
+            quote 69
+            ifspawnedby SHOTGUNAMMO
+              state getcode
+            else
+              state quikget
+          }
+enda
+
+// Extra ammo for CASUL
+// Play a sound when player picks up item
+// then delete sprite from map
+// OR setup to be respawned
+/*
+actor AMMOLOTS
+  fall
+  ifmove RESPAWN_ACTOR_FLAG
+    state respawnit
+  else
+    ifp palive
+      ifcount 6
+        ifpdistl RETRIEVEDISTANCE
+          ifcanseetarget
+          {
+            addammo CASUL_WEAPON 6
+            quote 65
+            ifspawnedby AMMOLOTS
+              state getcode
+            else
+              state quikget
+          }
+enda
+*/
+
+// Extra ammo
+// Play a sound when player picks up item
+// then delete sprite from map
+// OR setup to be respawned
+actor RIFLEAMMO
+  fall
+  ifmove RESPAWN_ACTOR_FLAG
+    state respawnit
+  else
+    ifp palive
+      ifpdistl RETRIEVEDISTANCE
+        ifcount 6
+          ifcanseetarget
+          {
+            addammo RIFLE_WEAPON RIFLEAMMOAMOUNT
+            quote 63
+            ifspawnedby RIFLEAMMO
+              state getcode
+            else
+              state quikget
+          }
+enda
+
+// Play a sound when player picks up item
+// then delete sprite from map
+// OR setup to be respawned
+actor ALIENARMGUN
+  fall
+  ifmove RESPAWN_ACTOR_FLAG
+    state respawnit
+  else
+    ifp palive
+      ifpdistl RETRIEVEDISTANCE
+        ifcount 6
+          ifcanseetarget
+          {
+            ifgotweaponce 0
+              break
+
+            addweapon ALIENBLASTER_WEAPON 33
+            quote 87
+            ifspawnedby ALIENARMGUN
+              state getweaponcode
+            else
+              state quikweaponget
+          }
+enda
+
+// Play a sound when player picks up item
+// then delete sprite from map
+// OR setup to be respawned
+actor ALIENBLASTERAMMO
+  fall
+  ifmove RESPAWN_ACTOR_FLAG
+    state respawnit
+  else
+    ifp palive
+      ifpdistl RETRIEVEDISTANCE
+        ifcount 6
+          ifcanseetarget
+          {
+            addammo ALIENBLASTER_WEAPON ALIENBLASTERAMMOAMOUNT
+            quote 14
+           ifspawnedby ALIENBLASTERAMMO
+             state getcode
+           else
+             state quikget
+          }
+enda
+
+// Play a sound when player picks up item
+// then delete sprite from map
+// OR setup to be respawned
+actor BOWLINGBALLSPRITE
+  fall
+  ifmove RESPAWN_ACTOR_FLAG
+    state respawnit
+  else
+    ifp palive
+        ifpdistl RETRIEVEDISTANCE
+          ifcount 6
+            ifcanseetarget
+      {
+        ifgotweaponce 0
+          break
+        addweapon BOWLINGBALL_WEAPON 1
+        quote 60
+        ifspawnedby BOWLINGBALLSPRITE
+          state getweaponcode
+        else
+          state quikweaponget
+      }
+enda
+
+// Extra Dynamite ammo
+// Play a sound when player picks up item
+// then delete sprite from map
+// OR setup to be respawned
+actor HBOMBAMMO
+  fall
+  ifaction 0 {
+    cstat 256
+  }
+  ifmove RESPAWN_ACTOR_FLAG state respawnit
+  ifhitweapon
+  {
+    spawn EXPLOSION3
+    soundonce DYNEW
+    spawn BURNING
+    hitradius POWDERKEGBLASTRADIUS POWDERKEG_STRENGTH POWDERKEG_STRENGTH POWDERKEG_STRENGTH POWDERKEG_STRENGTH
+    killit
+    break
+  }
+  else
+    ifp palive
+      ifpdistl RETRIEVEDISTANCE
+        ifcount 6
+          ifcanseetarget
+          {
+            ifgotweaponce 0
+               break
+
+            addweapon DYNAMITE_WEAPON DYNAMITEBOX
+            addammo CROSSBOW_WEAPON DYNAMITEBOX
+            quote 55
+
+            ifspawnedby HBOMBAMMO
+              state getweaponcode
+            else
+              state quikweaponget
+          }
+enda
+
+// Play a sound when player picks up item
+// then delete sprite from map
+// OR setup to be respawned
+actor CROSSBOWSPRITE
+  fall
+  ifmove RESPAWN_ACTOR_FLAG
+    state respawnit
+  else
+    ifp palive
+      ifpdistl RETRIEVEDISTANCE
+        ifcount 6
+          ifcanseetarget
+          {
+            ifgotweaponce 0
+              break
+
+            addweapon CROSSBOW_WEAPON CROSSBOWAMMOBOX
+            addammo DYNAMITE_WEAPON DYNAMITEBOX
+            quote 56
+            ifspawnedby CROSSBOWSPRITE
+              state getweaponcode
+            else
+              state quikweaponget
+          }
+enda
+
+// Shotgun for player to pick up
+//  either placed on level by designers
+//  OR spawned by Billy
+// Play a sound when player picks up item
+// then delete sprite from map
+// OR setup to be respawned
+actor SHOTGUNSPRITE
+  fall
+  ifmove RESPAWN_ACTOR_FLAG
+    state respawnit
+  else
+    ifp palive
+      ifpdistl RETRIEVEDISTANCE
+        ifcount 6
+          ifcanseetarget
+          {
+            // randomly set how much
+            // ammo shotgun has
+            ifspawnedby BILLYRAY
+            {
+              addweapon SHOTGUN_WEAPON 0
+              ifrnd 64
+                addammo SHOTGUN_WEAPON 4
+              else ifrnd 64
+                addammo SHOTGUN_WEAPON 4
+              else ifrnd 64
+                addammo SHOTGUN_WEAPON 2
+              else
+                addammo SHOTGUN_WEAPON 2
+            }
+            else
+            {
+              ifgotweaponce 0
+                break
+              addweapon SHOTGUN_WEAPON SHOTGUNAMMOAMOUNT
+              quote 57
+            }
+
+            ifspawnedby SHOTGUNSPRITE
+              state getweaponcode
+            else
+              state quikweaponget
+          }
+enda
+
+actor BUZSAWSPRITE
+  fall
+  ifmove RESPAWN_ACTOR_FLAG
+    state respawnit
+  else
+    ifp palive
+        ifpdistl RETRIEVEDISTANCE
+          ifcount 6
+            ifcanseetarget
+      {
+        ifgotweaponce 0
+          break
+        addweapon THROWSAW_WEAPON 10
+        quote 61
+        ifspawnedby BUZSAWSPRITE
+          state getweaponcode
+        else
+          state quikweaponget
+      }
+enda
+
+actor TEATGUN
+  fall
+  ifmove RESPAWN_ACTOR_FLAG
+    state respawnit
+  else
+    ifp palive
+        ifpdistl RETRIEVEDISTANCE
+          ifcount 6
+            ifcanseetarget
+      {
+        ifgotweaponce 0
+          break
+        addweapon TEATGUN_WEAPON 50
+        quote 59
+        ifspawnedby TEATGUN
+          state getweaponcode
+        else
+          state quikweaponget
+      }
+enda
+
+//  Adds thirty points to players health
+//  OR if players health is > 70
+//  bumps health to 100
+// Play a sound when player picks up item
+// then delete sprite from map
+// OR setup to be respawned
+actor PORKBALLS
+  fall
+  ifmove RESPAWN_ACTOR_FLAG
+    state respawnit
+  else
+    ifp palive
+      ifpdistl RETRIEVEDISTANCE
+        ifcount 6
+          ifphealthl MAXPLAYERHEALTH
+            ifcanseetarget
+            {
+               iseat 10
+               quote 62
+               ifspawnedby PORKBALLS
+                 state getcode
+               else
+                 state quikget
+            }
+enda
+
+// Bumps players health up to MAXPLAYERHEALTH
+// Play a sound when player picks up item
+// then delete sprite from map
+// OR setup to be respawned
+actor ECLAIRHEALTH
+  fall
+  ifmove RESPAWN_ACTOR_FLAG
+    state respawnit
+  else
+    ifp palive
+      ifpdistl RETRIEVEDISTANCE
+        ifcount 6
+          ifphealthl MAXPLAYERECLAIRHEALTH
+            ifcanseetarget
+            {
+              addphealth 50
+              quote 19
+              ifspawnedby ECLAIRHEALTH
+                state getcode
+              else
+                state quikget
+            }
+enda
+
+
+// Portable health.  Holds 100 health points
+// Play a sound when player picks up item
+// then delete sprite from map
+// OR setup to be respawned
+actor WHISKEY
+  fall
+  ifmove RESPAWN_ACTOR_FLAG state respawnit
+  else
+    ifp palive
+      ifpdistl RETRIEVEDISTANCE
+        ifcount 6
+          ifpinventory GET_WHISKEY WHISKEY_AMOUNT
+            ifcanseetarget
+            {
+              addinventory GET_WHISKEY WHISKEY_AMOUNT
+              quote 3
+
+              ifspawnedby WHISKEY
+                state getcode
+              else
+                state quikget
+            }
+enda
+
+// Play a sound when player picks up item
+// then delete sprite from map
+// OR setup to be respawned
+actor FIRSTGUNSPRITE
+  fall
+  ifmove RESPAWN_ACTOR_FLAG
+    state respawnit
+  else
+    ifp palive
+      ifpdistl RETRIEVEDISTANCE
+        ifcount 6
+          ifcanseetarget
+          {
+            ifgotweaponce 0
+              break
+            addweapon CASUL_WEAPON 48
+            ifspawnedby FIRSTGUNSPRITE
+              state getweaponcode
+            else
+              state quikweaponget
+          }
+enda
+
+// IF NOT USED LATER, DELETE
+// Play a sound when player picks up item
+// then delete sprite from map
+// OR setup to be respawned
+actor POWDERKEGSPRITE
+  fall
+  ifaction 0
+  {
+    cstat 256
+  }
+
+  ifhitweapon
+  {
+    spawn EXPLOSION2
+    soundonce DYNEW
+    spawn BURNING
+    hitradius POWDERKEGBLASTRADIUS POWDERKEG_STRENGTH POWDERKEG_STRENGTH POWDERKEG_STRENGTH POWDERKEG_STRENGTH
+    killit
+    break
+  }
+
+  ifmove RESPAWN_ACTOR_FLAG
+    state respawnit
+  else
+    ifp palive
+      ifpdistl RETRIEVEDISTANCE
+        ifcount 60
+          ifcanseetarget
+          {
+           ifgotweaponce 0
+            break
+
+           addweapon POWDERKEG_WEAPON 1
+           quote 58
+           ifspawnedby POWDERKEGSPRITE
+             state getweaponcode
+           else
+             state quikweaponget
+          }
+enda
+
+// IF NOT USED LATER, DELETE
+// Play a sound when player picks up item
+// then delete sprite from map
+// OR setup to be respawned
+actor RIFLESPRITE
+  fall
+  ifmove RESPAWN_ACTOR_FLAG
+    state respawnit
+  else
+    ifp pshrunk nullop
+    else
+      ifp palive
+        ifpdistl RETRIEVEDISTANCE
+          ifcount 6
+            ifcanseetarget
+      {
+        ifgotweaponce 0
+          break
+
+        addweapon RIFLE_WEAPON 30
+        quote 54
+        ifspawnedby RIFLESPRITE
+          state getweaponcode
+        else
+          state quikweaponget
+      }
+enda
+
+action FIRE_FRAMES   -1 14 1 1 8
+move FIREVELS
+
+state firestate
+
+  ifaction 0
+    ifrnd 16
+    {
+      action FIRE_FRAMES
+      cstator 128
+    }
+
+  sleeptime 300         // Never let it fall to sleep
+
+  ifspawnedby FIRE
+  {
+    ifgapzl 16
+      break
+  }
+  else
+    ifspawnedby FIRE2
+  {
+    ifgapzl 16
+      break
+  }
+
+  ifinwater
+    killit
+
+  ifp palive
+    ifpdistl 844
+      ifrnd 32
+        ifcansee
+  {
+    soundonce LN_PAIN8
+    addphealth -1
+    palfrom 32 32
+  }
+
+  ifactor FIRE
+  {
+    ifspawnedby FIRE
+      break
+  }
+  else
+    ifactor FIRE2
+      ifspawnedby FIRE2
+        break
+
+  iffloordistl 128
+  {
+    ifrnd 128
+    {
+      ifcount 84
+        killit
+                // This line(and the else below)
+                // is not necessary, since actors
+                // with zero x-size are automatically
+                // deleted anyway!
+      else
+        ifcount 42
+          sizeto 0 0
+      else
+        sizeto 32 32
+    }
+  }
+  else
+    killit
+
+ends
+
+useractor notenemy FIRE WEAK 0 FIREVELS state firestate enda
+useractor notenemy FIRE2 WEAK 0 FIREVELS state firestate enda
+
+state drop_ammo
+  ifrnd SPAWNAMMOODDS
+    spawn AMMO
+ends
+
+state drop_pistol
+  // ifrnd SPAWNAMMOODDS
+    spawn FIRSTGUNSPRITE
+ends
+
+state drop_sgshells
+  ifrnd SPAWNAMMOODDS
+    spawn SHOTGUNAMMO
+ends
+
+state drop_shotgun
+  ifrnd SPAWNAMMOODDS
+    spawn SHOTGUNSPRITE
+ends
+
+state random_wall_jibs
+  ifrnd 96
+    shoot BLOODSPLAT1
+  ifrnd 96
+    shoot BLOODSPLAT2
+  ifrnd 96
+    shoot BLOODSPLAT3
+  ifrnd 96
+    shoot BLOODSPLAT4
+  ifrnd 96
+    shoot BLOODSPLAT1
+ends
+
+state killme
+  ifp pfacing
+    ifpdistl 1280
+      ifhitspace
+        soundonce KILLME
+ends
+
+action BLOODFRAMES 0 4 1 1 15
+actor BLOOD 0 BLOODFRAMES
+  sizeto 48 48 sizeto 48 48 sizeto 48 48
+  ifpdistg 3144 killit
+  ifactioncount 4 killit
+enda
+
+action SAWBLADE 0 1 1 1 1
+actor CIRCLESTUCK 0 SAWBLADE
+  ifactioncount 256
+  {
+    fall
+    iffloordistl 8 {
+      lotsofglass 3
+      killit
+    }
+  }
+enda
+
+
+useractor enemy UFOBEAM THROWSAW_WEAPON_STRENGTH enda
+
+action DESTROYER 0 1 1 1 1
+ai AIDESTROYER DESTROYER 0 faceplayer
+ai AIDESTROYER1 DESTROYER 0 faceplayer
+ai AIDESTROYER2 DESTROYER 0 faceplayer
+useractor notenemy DESTRUCTO MEGASTRENGTH
+  ifaction 0 {
+    ifspritepal 0
+    {
+      cstat 256
+    }
+    else {
+      cstat 0
+    }
+    cstator 32768
+    ai AIDESTROYER
+  }
+  ifhitweapon {
+    ai AIDESTROYER1
+  }
+  ifai AIDESTROYER1
+  {
+    ifactioncount 1
+    {
+      destroyit
+      ifrnd 32
+        sound DYNEW
+      else
+        soundonce DYNEW
+      ifrnd 128
+      {
+        spawn BURNING
+        killit
+      }
+      else
+      {
+        ai AIDESTROYER2
+      }
+    }
+    ifactioncount 0
+    {
+      ifspritepal 0
+      {
+        destroyit
+        spawn EXPLOSION2
+        soundonce DYNEW
+        spawn BURNING
+        killit
+      }
+      ifspritepal 1
+      {
+        destroyit
+        spawn EXPLOSION2
+        soundonce DYNEW
+        spawn BURNING
+        killit
+      }
+    }
+  }
+  ifai AIDESTROYER2
+  {
+    ifrnd 128
+    {
+      spawn EXPLOSION2
+      ifrnd 32
+        sound DYNEW
+      else
+        soundonce DYNEW
+      ifrnd 32
+      {
+        killit
+      }
+    }
+  }
+enda
+
+// Weapon actors
+actor CROWBAR CROWBAR_WEAPON_STRENGTH enda
+actor SHITBALL SHITBALL_WEAPON_STRENGTH enda
+actor RIFLE RIFLE_WEAPON_STRENGTH enda
+actor SHOTGUN SHOTGUN_WEAPON_STRENGTH enda
+actor FIRELASER FIRELASER_WEAPON_STRENGTH enda
+actor DYNAMITE DYNAMITE_WEAPON_STRENGTH enda
+actor BOUNCEMINE BOUNCEMINE_WEAPON_STRENGTH enda
+actor MORTER MORTER_WEAPON_STRENGTH enda
+actor TESLABALL MORTER_WEAPON_STRENGTH enda
+actor CROSSBOW CROSSBOW_WEAPON_STRENGTH enda
+// actor ALIENBLASTERBLAST PLASMATHROWER_WEAPON_STRENGTH enda
+// actor COOLEXPLOSION1 COOL_EXPLOSION_STRENGTH enda
+actor BUZSAW BUZSAW_WEAPON_STRENGTH enda
+
+actor OWHIP ALIENGISMO_WEAPON_STRENGTH enda
+actor UWHIP ALIENGISMO_WEAPON_STRENGTH enda
+actor DILDO PLASMATHROWER_WEAPON_STRENGTH enda
+
+action SAWBLADE1 0 7 1 1 10
+actor CIRCLESAW THROWSAW_WEAPON_STRENGTH SAWBLADE1 enda
+
+action WEAP2FRAMES 0  4  1  1  6
+actor SHOTSPARK1 CASUL_WEAPON_STRENGTH WEAP2FRAMES
+  ifdead
+    killit
+  ifactioncount 4
+    killit
+  else
+  {
+    ifactioncount 3
+    {
+      ifinwater
+        spawn WATERBUBBLE
+    }
+    else
+      ifcount 2 nullop
+      else
+        ifonwater
+          spawn WATERSPLASH2
+        else
+          ifonmud
+            spawn MUD
+  }
+enda
+
+include "LEONARD.CON"
+include "BILLY.CON"
+include "HEN.CON"
+include "COOT.CON"
+include "MOSQUITO.CON"
+include "COW.CON"
+include "PIG.CON"
+include "MINION.CON"
+include "HULK.CON"
+// include "EVILLEN.CON"
+include "TORNADO.CON"
+include "SHERIFF.CON"
+include "VIXEN.CON"
+include "BUBBA.CON"
+include "DOG.CON"
+include "CRICKETC.CON"
+include "TURDBOSS.CON"
+
+/*
+action ALAVABUBBLE
+action ALAVABUBBLEANIM 0 5 1 1 16
+
+useractor notenemy LAVABUBBLE
+  ifaction 0
+  {
+    cstat 32768
+    action ALAVABUBBLE
+  }
+  else
+    ifaction ALAVABUBBLE
+  {
+    ifcount 72
+      ifrnd 2
+    {
+      cstat 0
+      action ALAVABUBBLEANIM
+    }
+  }
+  else
+  {
+    ifactioncount 5
+    {
+      cstat 32768
+      action ALAVABUBBLE
+    }
+  }
+enda
+*/
+
+action TIKI      0  1 1 1 1
+action TIKI_ANIM 24 2 1 1 1
+move NO_MOVE
+ai AITIKILAMP1 TIKI NO_MOVE
+ai AITIKILAMP2 TIKI_ANIM NO_MOVE
+useractor notenemy TIKILAMP REALLYTOUGH
+  ifaction 0
+  {
+    cstat 256
+    ai AITIKILAMP1
+  }
+  ifhitweapon {
+    ai AITIKILAMP2
+  }
+enda
+
+useractor enemy MINECARTKILLER MEGASTRENGTH
+  ifaction 0
+  {
+    cstator 32768
+  }
+  ifpdistl 1024
+  {
+    addphealth -1000
+    wackplayer
+  }
+enda
+
+action BUSTAWINDOWA 0 1 1 1 1
+action BUSTAWINDOWB 1 1 1 1 1
+ai AIBUSTAWIN4A BUSTAWINDOWA NO_MOVE
+ai AIBUSTAWIN4B BUSTAWINDOWB NO_MOVE
+useractor notenemy BUSTAWIN4A WEAK
+  ifhitweapon {
+    ai AIBUSTAWIN4B
+    sound GLASSSND
+    lotsofglass 10
+  }
+enda
+
+action BUSTAWINDOWC 0 1 1 1 1
+action BUSTAWINDOWD 1 1 1 1 1
+ai AIBUSTAWIN5A BUSTAWINDOWC NO_MOVE
+ai AIBUSTAWIN5B BUSTAWINDOWD NO_MOVE
+useractor notenemy BUSTAWIN5A WEAK
+  ifhitweapon {
+    ai AIBUSTAWIN5B
+    sound GLASSSND
+    lotsofglass 8
+  }
+enda

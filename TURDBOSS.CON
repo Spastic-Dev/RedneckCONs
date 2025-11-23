@@ -1,0 +1,418 @@
+// The Turd Boss
+// By Arthur Attila Donavan
+
+// Tiles starting positions for Turd Boss
+// SBSWIPE 4770
+// SBPAIN  4810
+// SBDIE   4820
+// SBMOVE  5015  actor - Tile to be used in MAKEMAP
+// SBSPIT  5050
+// SBDIP   5085
+
+// Local defines
+define SBSPITSPD 16
+define SBDIPSPD 16
+define SBSNDRND 64
+
+// Define actions
+action ASBSWIPEA  -245  6  5  1  16
+action ASBSWIPEB  -215  1  5  1   1
+action ASBSWIPEC  -215  2  5  1  16
+action ASBPAIN    -205  7  1  1  20
+action ASBDIE     -195  6  1  1  22
+action ASBMOVE       0  7  5  1  16
+// action ASBSPIT      35  7  5  1  SBSPITSPD
+action ASBSPITA     35  5  5  1  SBSPITSPD
+action ASBSPITB     60  1  5  1  SBSPITSPD
+action ASBSPITC     55  1  5  1  SBSPITSPD
+action ASBSPITD     65  1  5  1  SBSPITSPD
+action ASBSPITE     55  1  5  1  SBSPITSPD
+action ASBSPITF     50  1  5  1  SBSPITSPD
+// action ASBDIP       70  6  5  1  SBDIPSPD
+action ASBDIPA      70  1  5  1  SBDIPSPD
+action ASBDIPB      80  1  5  1  SBDIPSPD
+action ASBDIPC      75  2  5  1  SBDIPSPD
+action ASBDIPD      90  1  5  1  SBDIPSPD
+action ASBDIPE      85  2  5  1  SBDIPSPD
+action ASBDIPF      80  1  5  1  SBDIPSPD
+action ASBDIPG      95  1  5  1  SBDIPSPD
+action ASBDIPH      80  1  5  1  SBDIPSPD
+
+// Define movements
+move SBWALKVEL 100
+move SBDIEVEL -40
+move SBSTOP 0
+
+// Define AI states
+ai AISBAI   ASBMOVE SBWALKVEL faceplayer
+ai AISBDIE  ASBDIE  SBDIEVEL  faceplayer
+
+// States (subroutines) ******************************
+state sbsndhurt
+  ifrnd 85
+    soundonce SB_HRT1
+  else ifrnd 128
+    soundonce SB_HRT2
+  else
+    soundonce SB_HRT3
+ends
+
+state sbsndmin
+  ifrnd 85
+    soundonce SB_MIN1
+  else ifrnd 128
+    soundonce SB_MIN2
+  else
+    soundonce SB_MIN3
+ends
+
+state sbsndamb
+  ifrnd 25
+    state sbsndmin
+  else ifrnd 28
+    soundonce SB_LAF1
+  else ifrnd 31
+    soundonce SB_LAF2
+  else ifrnd 43
+    soundonce SB_CORN
+  else ifrnd 51
+    soundonce SB_ATK1
+  else ifrnd 64
+    soundonce SB_ATK2
+  else ifrnd 85
+    soundonce SB_POO
+  else ifrnd 128
+    soundonce SB_IAM
+  else
+    soundonce SB_LORD
+ends
+
+state sbsize
+  ifactorhealthl 500
+  {
+    sizeto 24 24
+    sizeto 24 24
+  }
+  else ifactorhealthl 625
+  {
+    sizeto 27 27
+    sizeto 27 27
+  }
+  else ifactorhealthl 750
+  {
+    sizeto 30 30
+    sizeto 30 30
+  }
+  else ifactorhealthl 875
+  {
+    sizeto 33 33
+    sizeto 33 33
+  }
+  else ifactorhealthl 1000
+  {
+    sizeto 36 36
+    sizeto 36 36
+  }
+  else ifactorhealthl 1125
+  {
+    sizeto 39 39
+    sizeto 39 39
+  }
+  else ifactorhealthl 1250
+  {
+    sizeto 42 42
+    sizeto 42 42
+  }
+  else ifactorhealthl 1375
+  {
+    sizeto 45 45
+    sizeto 45 45
+  }
+  else ifactorhealthl 1501
+  {
+    sizeto 48 48
+    sizeto 48 48
+  }
+ends
+
+state sbai
+  ifaction ASBMOVE                 // Seek for a little while
+  {
+    ifactioncount 7
+      ifcansee
+        ifcanshoottarget
+        {
+          ifpdistl 2000
+          {
+            ifrnd 128
+            {
+              action ASBSWIPEA
+            }
+            else
+            {
+              action ASBMOVE
+              ifrnd SBSNDRND
+                state sbsndamb
+            }
+          }
+          else ifrnd 85
+          {
+            action ASBSPITA
+            ifrnd 128
+              soundonce SB_SCK1
+          }
+          else ifrnd 85
+          {
+            action ASBDIPA
+          }
+          else
+          {
+            action ASBSWIPEA
+          }
+        }
+  }
+  else ifaction ASBSWIPEA          // Swipe attack
+  {
+    ifactioncount 6
+      action ASBSWIPEB
+  }
+  else ifaction ASBSWIPEB
+  {
+    ifpdistl 1800
+    {
+      palfrom 16 16
+      addphealth HULKWHACKAMOUNT
+      soundonce CROWUSH
+      soundonce LNRD_GRUNT
+      wackplayer
+    }
+    else
+    {
+      shoot SHITBALL
+    }
+    action ASBSWIPEC
+  }
+  else ifaction ASBSWIPEC
+  {
+    ifactioncount 2
+    {
+      shoot SHITBALL
+      action ASBMOVE
+      ifrnd SBSNDRND
+        state sbsndamb
+    }
+  }
+/*
+  else ifaction ASBSPIT            // Spit attack
+  {
+    ifactioncount 7
+    {
+      action ASBMOVE
+      ifrnd SBSNDRND
+        state sbsndamb
+    }
+  }
+*/
+  else ifaction ASBSPITA           // Spit attack
+  {
+    ifactioncount 5
+    {
+      action ASBSPITB
+      shoot SHITBALL
+      shoot SHITBALL
+      ifrnd 128
+        soundonce SB_SPT1
+      else
+        soundonce SB_SPT2
+    }
+  }
+  else ifaction ASBSPITB           // Spit attack
+  {
+    ifactioncount 1
+      action ASBSPITC
+  }
+  else ifaction ASBSPITC           // Spit attack
+  {
+    ifactioncount 1
+    {
+      action ASBSPITD
+      shoot SHITBALL
+      shoot SHITBALL
+    }
+  }
+  else ifaction ASBSPITD           // Spit attack
+  {
+    ifactioncount 1
+      action ASBSPITE
+  }
+  else ifaction ASBSPITE           // Spit attack
+  {
+    ifactioncount 1
+    {
+      action ASBSPITF
+      shoot SHITBALL
+      shoot SHITBALL
+    }
+  }
+  else ifaction ASBSPITF           // Spit attack
+  {
+    ifactioncount 1
+      action ASBMOVE
+      ifrnd SBSNDRND
+        state sbsndamb
+  }
+/*
+  else ifaction ASBDIP             // Dip and spit attack
+  {
+    ifactioncount 6
+      action ASBDIP
+  }
+*/
+  else ifaction ASBDIPA            // Dip and spit attack
+  {
+    ifactioncount 1
+      action ASBDIPB
+  }
+  else ifaction ASBDIPB            // Dip and spit attack
+  {
+    ifactioncount 1
+    {
+      action ASBDIPC
+      ifrnd 128
+        soundonce SB_SCK1
+    }
+  }
+  else ifaction ASBDIPC            // Dip and spit attack
+  {
+    ifactioncount 2
+      action ASBDIPD
+  }
+  else ifaction ASBDIPD            // Dip and spit attack
+  {
+    ifactioncount 1
+      action ASBDIPE
+  }
+  else ifaction ASBDIPE            // Dip and spit attack
+  {
+    ifactioncount 2
+    {
+      action ASBDIPF
+      ifrnd 128
+        soundonce SB_SPT1
+      else
+        soundonce SB_SPT2
+    }
+  }
+  else ifaction ASBDIPF            // Dip and spit attack
+  {
+    ifactioncount 1
+      action ASBDIPG
+  }
+  else ifaction ASBDIPG            // Dip and spit attack
+  {
+    ifactioncount 1
+    {
+      shoot SHITBALL
+      shoot SHITBALL
+      shoot SHITBALL
+      shoot SHITBALL
+      action ASBDIPH
+    }
+  }
+  else ifaction ASBDIPH            // Dip and spit attack
+  {
+    ifactioncount 1
+    {
+      action ASBMOVE
+      ifrnd SBSNDRND
+        state sbsndamb
+    }
+  }
+  else ifaction ASBPAIN            // Experience pain
+  {
+    ifactioncount 7
+    {
+      action ASBMOVE
+      ifrnd SBSNDRND
+        state sbsndamb
+    }
+  }
+ends
+
+state sbhealth
+  ifactorhealthl 1500
+  {
+    ifcount 425
+    {
+      addstrength 125
+      resetcount
+    }
+  }
+  else ifactorhealthg 1500
+  {
+    strength 1500
+  }
+ends
+
+// Actors ********************************************
+
+// Main code for Turd Boss.
+actor SBMOVE 2500 ASBMOVE // SBSTRENGTH
+  fall
+
+  ifai 0
+  {
+    cstat 257
+//    sizeto 48 48
+//    sizeto 48 48
+    ai AISBAI
+  }
+
+  ifai AISBAI
+  {
+    state sbsize
+    state sbai
+    state sbhealth
+  }
+  else ifai AISBDIE             // Die sucker
+  {
+    sizeto 4 4
+
+    ifactioncount 6
+    {
+      endofgame 2
+      killit
+    }
+  }
+
+  ifhitweapon
+  {
+    state random_wall_jibs
+    spawn BLOOD
+
+    ifdead
+    {
+      ifai AISBDIE
+        nullop
+      else
+      {
+        ai AISBDIE
+        resetcount
+        soundonce SB_DIE
+      }
+    }
+    else
+    {
+      ifrnd 32
+      {
+        action ASBPAIN
+        state sbsndhurt
+      }
+      ifrnd 16
+        state standard_minionjibs
+    }
+
+  }
+
+enda
+

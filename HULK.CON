@@ -1,0 +1,375 @@
+
+
+// Hulk Guard
+
+action AHULKSTAND        0  1  1  1  40
+action AHULKWALKING    -41  8  5  1  8
+action AHULKRUNNING    -41  8  5  1  8
+action AHULKWHACK       21  6  5  1  20
+action AHULKDYING       89  9  1  1  15
+action AHULKFLINTCH     73  3  5  1  11
+action AHULKLYINGDEAD   97  1  1
+action AHULKSHOOT        0  4  5  1  40
+action AHULKLOB         52  6  5  1  20
+
+move HULKWALKVEL  160
+move HULKRUNVEL   160
+move HULKSTOP
+
+ai AIHULKGETENEMY     AHULKWALKING    HULKWALKVEL seekplayer
+ai AIHULKCHARGEENEMY  AHULKRUNNING    HULKRUNVEL  seekplayer
+ai AIHULKWHACKENEMY   AHULKWHACK      HULKSTOP    faceplayerslow
+ai AIHULKDYING        AHULKDYING      HULKSTOP    faceplayer
+// ai AIHULKSHOOT        AHULKSHOOT      HULKSTOP    faceplayersmart
+ai AIHULKSHOOT        AHULKSHOOT      HULKSTOP    faceplayer
+ai AIHULKLOB          AHULKLOB        HULKSTOP    faceplayer
+// ai AIHULKFLINTCH      AHULKFLINTCH    HULKSTOP    geth
+ai AIHULKFLINTCH      AHULKFLINTCH    HULKSTOP    faceplayer
+
+state hulk_body_jibs
+  guts HULKJIBA 2
+  guts HULKJIBB 2
+  guts HULKJIBC 1
+  spawn BLOODPOOL
+ends
+
+state hulkseekstate
+
+  // If Hulk is allowed to leave his home sector
+  ifactornotstayput
+  {
+    // if player is alive, and you can see him,
+    //  and distance < 1596, change ai to whack him
+    ifp palive
+      ifcansee
+        ifcanshoottarget
+          ifpdistl 1596
+          {
+            ai AIHULKWHACKENEMY
+            break
+          }
+
+    // if current hulk ai is charging enemy
+    ifai AIHULKCHARGEENEMY
+    {
+      // if player is alive, and you can see him,
+      //  and player distance < 1596, switch ai to whack him
+      ifp palive
+        ifcansee
+          ifcanshoottarget
+            ifpdistl 1596
+            {
+              ai AIHULKWHACKENEMY
+              break
+            }
+
+      // Make Hulk walk around some before he shoots
+      ifcount 18
+      {
+         // NN out of 256 time and player is alive and hulk can
+         // see player, switch ai to shoot
+         ifrnd 32
+             ifp palive
+               ifcansee
+                 ifcanshoottarget
+                 {
+                   ai AIHULKSHOOT
+                   break
+                 }
+
+         // NN out of 256 times, and player is alive and hulk can
+         // see player, switch ai to shoot
+         ifrnd 16
+             ifp palive
+               ifcansee
+                 ifcanshoottarget
+                 {
+                   ai AIHULKLOB
+                   break
+                 }
+      }  // end ifcount
+
+    }
+    // if ai NOT charge, and distance > 4096
+    // switch ai so IS charge
+    else ifpdistg 4096
+    {
+       ai AIHULKCHARGEENEMY
+       break
+    }
+
+
+    // NN out of 256 times, if we get down here in
+    // the code and we're not moving
+    // try opening a door to find player
+    ifrnd 4
+      ifnotmoving
+        operate
+  }
+  // Else Hulk confined to home sector
+  else
+  {
+    // if count = 16, and player alive, and distance < 1596,
+    // and can see player, switch ai to whack
+    ifactioncount 16
+    {
+      ifp palive
+        ifpdistl 1596
+          ifcansee
+          {
+            ai AIHULKWHACKENEMY
+            break
+          }
+    }
+    // Make Hulk walk around some before he shoots
+    ifcount 18
+    {
+       // NN out of 256 time and player is alive and hulk can
+       // see player, switch ai to shoot
+       ifrnd 32
+           ifp palive
+             ifcansee
+               ifcanshoottarget
+               {
+                 ai AIHULKSHOOT
+                 break
+               }
+
+       // NN out of 256 times, and player is alive and hulk can
+       // see player, switch ai to shoot
+       ifrnd 16
+           ifp palive
+             ifcansee
+               ifcanshoottarget
+               {
+                 ai AIHULKLOB
+                 break
+               }
+    }  // end ifcount
+
+    // if count > 16, 32 out of 256 times, move hulk at a
+    // random angle with current horizontal movement
+    ifcount 16
+      ifrnd 32
+        move HULKWALKVEL randomangle geth
+  }
+
+// end hulkseekstate
+ends
+
+state hulkwhackstate
+  // At count 19, ifpdist > NN AIHULKGETENEMY
+  // else whack'em
+  ifcount 19
+    nullop
+  else ifcount 18
+  {
+    ifpdistl 1596 {
+       palfrom 16 16
+      addphealth HULKWHACKAMOUNT
+      sound CROWUSH
+      sound LNRD_GRUNT
+      wackplayer
+      resetcount
+    }
+    else {
+      ai AIHULKSHOOT
+    }
+  }
+
+
+  // At count 15, NN out of 256 sound ATTACK
+  // ifcount 8
+  //     nullop
+  // else ifcount 7
+  // {
+  //    ifrnd 8
+  //      soundonce HULK_ATTACK
+  // }
+// end hulkwhackstate
+ends
+
+state checkhulkhit
+  spawn BLOOD
+  ifdead
+  {
+    ifwasweapon CROSSBOW
+    {
+      sound SQUISHED
+      state hulk_body_jibs
+      state standard_jibs
+      spawn ALIENARMGUN
+      killit
+    }
+    else
+      ifwasweapon RADIUSEXPLOSION
+    {
+      sound SQUISHED
+      state hulk_body_jibs
+      state standard_jibs
+      spawn ALIENARMGUN
+      killit
+    }
+    else
+    {
+      // if wasn't blown up, leave body as
+      // solid so can be blown up before it
+      // respawns
+      ai AIHULKDYING
+      ifrnd 64
+        spawn BLOODPOOL
+      sound LN_BITCH
+    }
+    sound HULK_DYING
+  }
+  else
+  {
+    sound HULK_PAIN
+    state random_wall_jibs
+    ifrnd 32
+      ai AIHULKFLINTCH
+  }
+ends
+
+// state hulkjumpstate
+//  ifaction AHULKFALL
+//  {
+//    iffloordistl 16
+//      ai AIHULKGETENEMY
+//  }
+//  else
+//    ifcount 32
+//      action AHULKFALL
+// ends
+
+state hulkdyingstate
+  ifactioncount 7
+  {
+    iffloordistl 8
+      sound THUD
+    move HULKSTOP
+    action AHULKLYINGDEAD
+  }
+ends
+
+state hulkdodgestate
+  ifactioncount 13
+    ai AIHULKGETENEMY
+ends
+
+state hulklobbedstate
+
+    // ifcount 15
+    ifactioncount 5 {
+      ai AIHULKGETENEMY
+    }
+    else ifcount 14
+    {
+      // sound BOS1_ATTACK2
+      shoot MORTER
+      resetcount
+    }
+    ifcount 5
+      nullop
+    else ifcount 4
+      ifrnd 16
+        sound HULK_SPIT
+ends
+
+state hulkshootstate
+    ifactioncount 5
+    {
+      ai AIHULKGETENEMY
+    }
+    else ifcount 12
+    {
+      shoot FIRELASER
+      sound LASERH
+      resetcount
+    }
+    else ifcount 5
+      nullop
+    else ifcount 4
+      ifrnd 16
+        sound HULK_SPIT
+ends
+
+actor HULKSTAYPUT HULKSTRENGTH
+        ai AIHULKGETENEMY
+        cstator 257
+        cactor HULK
+enda
+
+
+actor HULK HULKSTRENGTH AHULKSTAND
+  fall
+  state checksquished
+  ifai 0
+  {
+    cstator 257
+    ai AIHULKGETENEMY
+  }
+  else ifaction AHULKLYINGDEAD
+  {
+    strength 0
+    ifhitweapon
+      ifwasweapon RADIUSEXPLOSION
+      {
+        sound SQUISHED
+        state standard_jibs
+        spawn ALIENARMGUN
+        killit
+        break
+      }
+
+    ifcount RESPAWNACTORTIME
+    {
+      spawn TRANSPORTERSTAR
+      cstat 257
+      strength HULKRESPAWNEDSTRENGTH
+      ai AIHULKGETENEMY
+    }
+    break
+  }
+  else
+  {
+    fall
+    ifai AIHULKGETENEMY
+    {
+      state hulkseekstate
+    }
+    else ifai AIHULKCHARGEENEMY
+    {
+      state hulkseekstate
+    }
+    else ifai AIHULKFLINTCH
+    {
+      ifcount 10
+        ai AIHULKGETENEMY
+    }
+    else ifai AIHULKWHACKENEMY
+    {
+        state hulkwhackstate
+    }
+    else ifai AIHULKDYING
+    {
+        state hulkdyingstate
+    }
+    else ifai AIHULKSHOOT
+    {
+        state hulkshootstate
+    }
+    else ifai AIHULKLOB
+    {
+        state hulklobbedstate
+    }
+  }
+
+  ifhitweapon
+    state checkhulkhit
+enda
+
+// End Hulk
+
+
+

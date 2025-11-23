@@ -1,0 +1,562 @@
+/*
+  LEONARD.CON
+  Network player
+*/
+
+state standard_pjibs
+  guts JIBS1 1
+  guts JIBS3 2
+  guts JIBS4 1
+  guts JIBS5 1
+  guts JIBS6 2
+  guts LNRDTORSO 1
+  guts LNRDGUN 1
+ends
+
+state checksquished
+  ifsquished
+  {
+    addkills 1
+    sound SQUISHED
+    state standard_jibs
+    state random_ooz
+    killit
+  }
+ends
+
+move DONTGETUP
+move SHRUNKVELS 32
+move LNRDNOTMOVING
+
+state handle_dead_LNRDs
+  fall
+  ifmove 0   // 1st time initializiation...
+  {
+    ifrnd 128
+      cstat 4
+    else
+      cstat 0
+    move LNRDNOTMOVING
+  }
+
+  ifsquished
+  {
+    sound SQUISHED
+    state random_ooz
+    killit
+  }
+  else
+    ifcount 1024
+      ifpdistg 4096
+        killit
+  else
+  {
+    strength 0
+    ifhitweapon
+      ifwasweapon RADIUSEXPLOSION
+    {
+      state standard_jibs
+      killit
+    }
+  }
+ends
+
+action PLYINGFRAMES 0 1 0 1 1
+actor LNRDLYINGDEAD 0 PLYINGFRAMES
+  state handle_dead_LNRDs
+enda
+
+action PSTAND         0   1   5   1    1
+action PEXPLODE     106   5   1   1   10
+action PEXPLODEAD   113   1   1
+action PJPHOUVER     15   1   5   1
+action PWALK          0   8   5   1   8
+action PRUN          40   8   5   1   10
+//  check if this is an eight
+action PWALKBACK      5   8   5  -1   8
+action PRUNBACK      45   8   5  -1   10
+action PJUMPING      50   4   5   1   30
+action PFALLING     140   3   3   1   8
+action PDUCKING     165   1   5   1   1
+action PCRAWLING    155   8   5   1   20
+action PAKICKING    120   4   5   1   25
+action PFLINTCHING  145   1   1   1   10
+action PTHROWNBACK  145   7   1   1   18
+action PLYINGDEAD   153   1   1
+
+action PSWIMMINGGO   80   1   5   1   10
+action PSWIMMING     80   3   5   1   13
+action PSWIMMINGWAIT 80   1   5   1   13
+action PTREDWATER    80   2   5   1   17
+
+move PSTOPED
+
+state lnsndpain
+  ifrnd 64
+    soundonce LN_PAIN5
+  else ifrnd 85
+    soundonce LN_PAIN6
+  else ifrnd 128
+    soundonce LN_PAIN7
+  else
+    soundonce LN_PAIN8
+ends
+
+state check_pstandard
+  ifp pwalking
+    action PWALK
+  else
+    ifp pkicking
+      action PAKICKING
+  else
+    ifp pwalkingback
+      action PWALKBACK
+  else
+    ifp prunning
+      action PRUN
+  else
+    ifp prunningback
+      action PRUNBACK
+  else
+    ifp pjumping
+      action PJUMPING
+  else
+    ifp pducking
+      action PDUCKING
+ends
+
+actor APLAYER MAXPLAYERHEALTH PSTAND 0 0
+
+  ifaction 0 {
+    action PSTAND
+  }
+
+  ifdead
+  {
+
+    ifsquished
+      palfrom 32 63 63 63
+    else
+      fall
+
+    ifactioncount 7
+      move 0
+    else ifactioncount 6
+    {
+      ifmultiplayer
+        nullop
+      else
+      {
+        ifrnd 32
+          sound LNRD_KILLED5
+        else
+          ifrnd 32
+            sound LN_BNCH
+        else
+          ifrnd 32
+            sound LN_STANK
+        else
+          ifrnd 32
+            sound LN_BITCH
+      }
+    }
+
+    ifaction PLYINGDEAD
+    {
+      ifactioncount 3
+        move PSTOPED
+      quote 13
+      ifhitspace
+      {
+        action PSTAND
+        spawn LNRDLYINGDEAD
+        resetplayer
+      }
+      break
+    }
+
+    ifaction PTHROWNBACK
+    {
+      ifactioncount 5
+      {
+        spawn BLOODPOOL
+        action PLYINGDEAD
+      }
+      else
+        ifactioncount 1
+          move 0
+      break
+    }
+
+    ifaction PEXPLODEAD
+    {
+      quote 13
+      ifhitspace
+      {
+        resetplayer
+        action PSTAND
+      }
+      break
+    }
+    ifaction PEXPLODE
+    {
+      ifactioncount 5
+      {
+        action PEXPLODEAD
+        spawn BLOODPOOL
+      }
+      break
+    }
+
+    ifinwater
+    {
+      action PLYINGDEAD
+      spawn WATERBUBBLE
+      spawn WATERBUBBLE
+    }
+    else
+    {
+      action PEXPLODE
+      state standard_pjibs
+      cstat 32768
+      sound SQUISHED
+      sound LNRD_DEAD
+    }
+
+    tossweapon
+
+    break
+  }
+
+  ifsquished
+  {
+    strength -1
+    sound SQUISHED
+    state random_ooz
+    break
+  }
+
+  ifp ponmoonshine
+  {
+    ifp pstanding
+      nullop
+    else
+      spawn FRAMEEFFECT1
+  }
+
+  ifhitweapon
+  {
+    ifdead
+    {
+      ifmultiplayer
+        sound LNRD_KILLED4
+    }
+    else
+    {
+      ifmultiplayer
+      {
+        ifphealthl YELLHURTSOUNDSTRENGTHMP
+        {
+          ifrnd 64
+            sound LN_PAIN2
+          else ifrnd 85
+            sound LN_PAIN3
+          else ifrnd 128
+            sound LN_PAIN4
+          else
+            sound LNRD_DEAD
+        }
+        else
+        {
+          state lnsndpain
+        }
+      }
+      else
+      {
+        ifphealthl YELLHURTSOUNDSTRENGTH
+        {
+          ifrnd 74
+            sound LN_PAIN2
+          else
+            ifrnd 8
+              sound LN_PAIN3
+          else
+            sound LN_PAIN4
+        }
+        ifrnd 128
+          sound LN_PAIN8
+      }
+    }
+    ifstrength TOUGH
+    {
+      // state headhitstate
+      sound LNRD_GRUNT
+      ifp pstanding
+        action PFLINTCHING
+    }
+
+    ifwasweapon CROSSBOW
+    {
+      ifrnd 32
+        spawn BLOOD
+      ifdead
+        state standard_pjibs
+      palfrom 48 52
+      break
+    }
+    ifwasweapon RADIUSEXPLOSION
+    {
+      ifrnd 32
+        spawn BLOOD
+      ifdead
+        state standard_pjibs
+      palfrom 48 52
+      break
+    }
+    ifwasweapon SHOTSPARK1 {
+      palfrom 24 48
+    }
+    ifwasweapon CROWBAR
+      palfrom 16 32
+    ifwasweapon FIRELASER
+      palfrom 32 32
+
+    ifdead
+    {
+      action PTHROWNBACK
+      tossweapon
+    }
+
+    state random_wall_jibs
+
+    break
+  }
+
+  ifaction PFLINTCHING
+  {
+    ifactioncount 2
+      action PSTAND
+    break
+  }
+
+  ifinwater
+  {
+    ifaction PTREDWATER
+    {
+      ifp pwalking prunning
+        action PSWIMMINGGO
+    }
+    else
+      ifp pstanding pwalkingback prunningback
+        action PTREDWATER
+    else
+    {
+      ifaction PSWIMMING
+      {
+        ifrnd 4
+          spawn WATERBUBBLE
+        ifactioncount 4
+          action PSWIMMINGWAIT
+      }
+      else
+        ifaction PSWIMMINGWAIT
+      {
+        ifactioncount 2
+          action PSWIMMINGGO
+      }
+      else
+        ifaction PSWIMMINGGO
+      {
+        ifactioncount 2
+          action PSWIMMING
+      }
+      else
+        action PTREDWATER
+    }
+
+    ifrnd 4
+      spawn WATERBUBBLE // For effect
+
+    break
+  }
+  else
+  {
+    ifaction PTREDWATER
+      action PSTAND
+    ifaction PSWIMMING
+      action PSTAND
+    ifaction PSWIMMINGWAIT
+      action PSTAND
+    ifaction PSWIMMINGGO
+      action PSTAND
+    ifaction PJPHOUVER
+      action PFALLING
+  }
+
+  ifaction PFALLING
+  {
+    ifp ponground
+      action PSTAND
+    else
+    {
+      ifp pfalling
+        break
+      else
+        state check_pstandard
+    }
+  }
+
+  ifaction PDUCKING
+  {
+    ifgapzl 48
+    {
+      ifp pwalking pwalkingback prunning prunningback
+        action PCRAWLING
+    }
+    else ifp pducking
+    {
+      ifp pwalking pwalkingback prunning prunningback
+        action PCRAWLING
+    }
+    else
+    {
+      ifp pstanding
+        action PSTAND
+      else
+        state check_pstandard
+    }
+  }
+  else ifaction PCRAWLING
+  {
+    ifgapzl 48
+    {
+      ifp pstanding
+        action PCRAWLING
+    }
+    else
+      ifp pducking
+    {
+      ifp pstanding
+        action PDUCKING
+    }
+    else
+    {
+      ifp pstanding
+        action PSTAND
+      else
+        state check_pstandard
+    }
+  }
+  else
+    ifgapzl 48
+      action PDUCKING
+
+  else
+    ifaction PJUMPING
+  {
+    ifp ponground
+      action PSTAND
+    else
+      ifactioncount 4
+        ifp pfalling
+          action PFALLING
+  }
+
+  ifp pfalling
+    action PFALLING
+  else ifaction PSTAND
+  {
+      state check_pstandard
+  }
+  else ifaction PAKICKING
+  {
+    ifactioncount 2
+      action PSTAND
+    break
+  }
+  else ifaction PWALK
+  {
+    ifp pfalling
+      action PFALLING
+    else
+      ifp pstanding
+        action PSTAND
+    else
+      ifp prunning
+        action PRUN
+    else
+      ifp pwalkingback
+        action PWALKBACK
+    else
+      ifp prunningback
+        action PRUNBACK
+    else
+      ifp pjumping
+        action PJUMPING
+    else
+      ifp pducking
+        action PDUCKING
+  }
+  else ifaction PRUN
+  {
+    ifp pstanding
+      action PSTAND
+    else
+      ifp pwalking
+        action PWALK
+    else
+      ifp pwalkingback
+        action PWALKBACK
+    else
+      ifp prunningback
+        action PRUNBACK
+    else
+      ifp pjumping
+        action PJUMPING
+    else
+      ifp pducking
+        action PDUCKING
+  }
+  else ifaction PWALKBACK
+  {
+    ifp pstanding
+      action PSTAND
+    else
+      ifp pwalking
+        action PWALK
+    else
+      ifp prunning
+        action PRUN
+    else
+      ifp prunningback
+        action PRUNBACK
+    else
+      ifp pjumping
+        action PJUMPING
+    else
+      ifp pducking
+        action PDUCKING
+  }
+
+  else
+    ifaction PRUNBACK
+  {
+    ifp pstanding
+      action PSTAND
+    else
+      ifp pwalking
+        action PWALK
+    else
+      ifp prunning
+        action PRUN
+    else
+      ifp pwalkingback
+        action PWALKBACK
+    else
+      ifp pjumping
+        action PJUMPING
+    else
+      ifp pducking
+        action PDUCKING
+  }
+enda

@@ -1,0 +1,261 @@
+// TURD MINION
+
+action AMINRUN      0   8  5  1 11
+action AMINTHROW   40  11  5  1 18
+action AMINFREAK   95   5  5  1 8
+action AMINFREAK2  95   5  5  1 8
+action AMINJUMP   120   4  5  1 26
+action AMINFALL   140   4  5
+
+move MINRUNVEL    125 -16
+move MINJUMPVEL   264      // This value seems to control how far
+                           // the Minion jumps
+move MINJUMPVEL2  396
+move MINSTOP
+
+ai AIMINDODGE     AMINRUN     MINRUNVEL  dodgebullet
+ai AIMINJUMP      AMINJUMP    MINJUMPVEL jumptoplayer
+ai AIMINRUN       AMINRUN     MINRUNVEL  geth
+ai AIMINTHROW     AMINTHROW   MINSTOP    faceplayer
+ai AIMINFREAK     AMINFREAK   MINSTOP    faceplayerslow
+ai AIMINFREAK2    AMINFREAK   MINSTOP    spin
+ai AIMINAMBUSH    AMINJUMP    MINJUMPVEL2 jumptoplayer
+
+state minfreakstate
+
+  ifactioncount 2
+      soundonce MN_FREAK
+
+  // if we've done our dance 10 times
+  // and we're close to the player
+  // Self-destruct and cause damage
+  ifactioncount 20
+  {
+    ifpdistl 854
+    {
+      sound SQUISHED
+      state standard_minionjibs
+      addphealth MINIONFREAK
+      killit
+    }
+    // else run
+    else
+      ai AIMINRUN
+  }
+ends
+
+state minfreakstate2
+
+  ifactioncount 2
+      soundonce MN_FREAK
+
+  // if we've done our dance 10 times
+  // and we're close to the player
+  // Self-destruct and cause damage
+  ifactioncount 20
+  {
+    ifpdistl 4096
+    {
+      ifrnd 32
+      {
+        shoot SHITBALL
+        shoot SHITBALL
+        state minion_shitshower
+        soundonce LN_CRAP
+      }
+      ifactioncount 26
+      {
+        sound SQUISHED
+        ifpdistl 854
+        {
+          addphealth MINIONFREAK
+        }
+        soundonce LN_CRAP
+        state standard_minionjibs
+        state standard_minionjibs
+        killit
+      }
+    }
+    else
+      ai AIMINFREAK
+  }
+
+ends
+
+state minjumpstate
+  // If we're on frame AMINFALL, define above
+  // (last frame of AMINJUMP) and distance to floor < 16
+  // Start Running
+  ifaction AMINFALL
+  {
+    iffloordistl 16
+      ai AIMINRUN
+  }
+  // Else continue Jump anim until count > NN
+  // Then force frame to AMINFALL
+  // The ifcount NN controls the timing
+  // on when the Minion goes into his ready to land
+  // frame.  To tweak the timing on this
+  // adjust the ifcount NN value.
+  else
+    ifcount 32
+      action AMINFALL
+ends
+
+state minrunstate
+    // If we've gone through 12 cycles of the
+    // Run animation, either Run again (low prob)
+    // OR
+    //  Throw shit (highest prob)
+    //  Jump       (middle  prob)
+    //  Freak      (low     prob)
+    ifactioncount 12
+    {
+      // Keep on running
+      ifrnd 4
+      {
+        resetactioncount
+        resetcount
+      }
+      else
+      {
+        // If we can see the player
+        ifcansee
+        {
+          // either throw, jump, or freak
+          ifrnd 32
+            ai AIMINTHROW
+          else ifrnd 16
+            ai AIMINJUMP
+          else ifrnd 8
+            ai AIMINFREAK
+          else ifrnd 4
+            ai AIMINFREAK2
+        }
+        // Go find player
+        else
+          move MINRUNVEL seekplayer
+
+      }
+    }
+ends
+
+state minthrowstate
+    ifcount 18 {
+      shoot SHITBALL
+      ai AIMINRUN
+    }
+ends
+
+
+state checkminhit
+  //
+  spawn BLOOD
+  ifdead
+  {
+    // Sound Dying sounds, spray jibs
+    // Then delete Minion from game
+    addkills 1
+    sound SQUISHED
+    state standard_minionjibs
+
+    // If Minion is close to player
+    // Inflict damage
+    ifpdistl 854
+      addphealth MINIONFREAK
+
+    killit
+    // sound HULK_DYING
+  }
+  else
+  {
+    sound MN_PN
+    state random_wall_jibs
+
+    // If there are projectiles near
+    // Dodge or Throw (same prob)
+    // else if none of above selected
+    // No change (current ai will continue)
+    ifbulletnear
+    {
+       ifrnd 32
+         ai AIMINDODGE
+       else ifrnd 32
+         ai AIMINTHROW
+    }
+    // else No projectiles near so
+    // either
+    // Throw (high prob)
+    // Jump  (mid  prob)
+    // Freak (low  prob)
+    // No change (current ai will continue)
+    else ifrnd 32
+       ai AIMINTHROW
+    else ifrnd 16
+       ai AIMINJUMP
+    else ifrnd 8
+       ai AIMINFREAK
+  }
+ends
+
+actor MINION MINIONSTRENGTH AMINRUN
+  fall
+  state checksquished
+  ifai 0
+  {
+    cstator 257
+    ifspritepal 7
+    {
+      ai AIMINAMBUSH
+    }
+    else
+    {
+      ai AIMINRUN
+    }
+  }
+  else
+  {
+    fall
+    ifai AIMINRUN
+    {
+      state minrunstate
+    }
+    else ifai AIMINTHROW
+    {
+      state minthrowstate
+    }
+    else ifai AIMINFREAK
+    {
+      state minfreakstate
+    }
+    else ifai AIMINFREAK2
+    {
+      state minfreakstate2
+    }
+    else ifai AIMINJUMP
+    {
+       state minjumpstate
+    }
+    else ifai AIMINDODGE
+    {
+       ifactioncount 4
+         ai AIMINRUN
+    }
+    else ifai AIMINAMBUSH
+    {
+      state minjumpstate
+    }
+  }
+
+  ifhitweapon
+    state checkminhit
+
+  ifrnd 1
+  {
+    ifrnd 32
+      soundonce MN_AMB
+    else ifrnd 128
+      soundonce MN_REC
+  }
+
+enda

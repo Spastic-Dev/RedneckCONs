@@ -1,0 +1,466 @@
+// COOT
+
+// Tiles starting positions for Coot
+// COOT        5376  actor - Tile to be used in MAKEMAP
+// COOTSTAYPUT 5377  actor - Tile to be used in MAKEMAP
+// COOTSHOOT   5411
+// COOTDIE     5437
+// COOTDUCK    5481
+// COOTPAIN    5548
+// COOTTRANS   5568
+// COOTGETUP   5579
+
+// Local defines
+
+// Define actions
+action ACOOTDEFAULT     0  1  5  1    1
+action ACOOTWALKING     0  7  5  1   11
+action ACOOTSTAND      69  7  5  1   13
+action ACOOTRUNNING     0  7  5  1   11
+action ACOOTSHOOT      35  2  5  1   23
+action ACOOTRAISEGUN   45  2  5 -1   10
+action ACOOTLOWERGUN   55  2  5  1   10
+action ACOOTPAIN      172  4  5  1   22
+action ACOOTDYING      61  9  1  1   16
+action ACOOTLYINGDEAD  68  1  1  1    1
+action ACOOTFALLDOWN   61  7  1  1   16
+action ACOOTGETUP     148  3  5  1   13
+action ACOOTDUCKWALK  105  9  5  1   11
+action ACOOTCROUCHUP  192  2  5  1   10
+action ACOOTCROUCHDN  197  2  5 -1   10
+
+// Define movements
+move   COOTDUCKWALKVEL    18
+move   COOTWALKVEL        35
+move   COOTRUNVEL         35
+move   COOTSTOP
+
+// Define AI states
+ai AICOOTDUCKWALK     ACOOTDUCKWALK   COOTDUCKWALKVEL  dodgebullet geth
+ai AICOOTGETENEMY     ACOOTWALKING    COOTWALKVEL      seekplayer
+ai AICOOTDODGE        ACOOTRUNNING    COOTRUNVEL       dodgebullet
+ai AICOOTCHARGEENEMY  ACOOTRUNNING    COOTRUNVEL       seekplayer
+ai AICOOTFLEENEMY     ACOOTWALKING    COOTWALKVEL      fleeenemy
+ai AICOOTDYING        ACOOTDYING      COOTSTOP         faceplayer
+ai AICOOTSHOOT        ACOOTSHOOT      COOTSTOP         faceplayer
+ai AICOOTLOWERGUN     ACOOTLOWERGUN   COOTSTOP         faceplayer
+ai AICOOTRAISEGUN     ACOOTRAISEGUN   COOTSTOP         faceplayer
+ai AICOOTFALLDOWN     ACOOTFALLDOWN   COOTSTOP         faceplayer
+ai AICOOTGETUP        ACOOTGETUP      COOTSTOP         faceplayerslow
+ai AICOOTPAIN         ACOOTPAIN       COOTSTOP         faceplayerslow
+ai AICOOTSTAND        ACOOTSTAND      COOTSTOP         faceplayerslow
+ai AICOOTCROUCHUP     ACOOTCROUCHUP   COOTSTOP         faceplayerslow
+ai AICOOTCROUCHDN     ACOOTCROUCHDN   COOTSTOP         faceplayerslow
+
+
+// States (subroutines) ******************************
+state coot_jibs
+  guts JIBS2 1
+  guts JIBS3 2
+  guts JIBS4 3
+  guts COOTJIBA 1
+  guts COOTJIBB 1
+  guts COOTJIBC 2
+  ifrnd 6
+  {
+    guts JIBS1 1
+    spawn BLOODPOOL
+  }         // spine
+  state jib_sounds
+ends
+
+state cootseekstate
+  // This coot type is usually put behind counters
+  // He duckwalks around and then pops up, if he
+  // can see you he'll shoot, then he ducks back
+  // down and duckwalks around
+  ifspritepal 31
+  {
+    ifp palive
+     ifcansee
+       ifcanshoottarget
+       {
+          ai AICOOTRAISEGUN
+          break
+       }
+  }
+  else
+  {
+    // If COOT is allowed to leave his home sector
+//    ifactornotstayput
+//    {
+      // if current COOT ai is charging enemy
+      ifai AICOOTCHARGEENEMY
+      {
+        // NN out of 256 times, if player distance > 3072
+        // and player is alive and COOT can
+        // see player, switch ai to shoot
+
+         ifrnd 32
+           ifp palive
+             ifcansee
+               ifcanshoottarget
+             {
+                ai AICOOTRAISEGUN
+                break
+             }
+
+         ifactioncount 3
+         {
+            ifrnd 8
+            {
+               ai AICOOTFLEENEMY
+               break
+            }
+
+            ifrnd 8
+            {
+               ai AICOOTCROUCHDN
+               break
+            }
+         }
+      }
+      // if ai NOT charge, and distance > 1596
+      // switch ai so IS charge
+      else ifpdistg 1596
+      {
+         ai AICOOTCHARGEENEMY
+         break
+      }
+      else ifpdistl 1597
+      {
+        ifrnd 16
+        {
+          ai AICOOTSHOOT
+          break;
+        }
+      }
+
+
+      // NN out of 256 times, if we get down here in
+      // the code and we're not moving
+      // try opening a door to find player
+      ifrnd 4
+        ifnotmoving
+          operate
+      // else NN out of 256 times, if projectile near
+      else ifrnd 16
+        ifbulletnear
+        {
+          ai AICOOTDODGE
+        }
+//    }
+    // Else COOT confined to home sector
+//    else
+//    {
+      // if count > 16, 32 out of 256 times, move COOT at a
+      // random angle with current horizontal movement
+//      ifcount 16
+//        ifrnd 32
+//          move COOTWALKVEL randomangle geth
+//    }
+
+  }  // end else not spritepal 31
+
+// end COOTseekstate
+ends
+
+
+state cootfleestate
+
+  // if count > NN
+  ifcount 10
+  {
+    // NN out of 256 times, if dist > NN, and player alive,
+    // and can see, switch ai to shoot
+    ifrnd 32
+    {
+      ifpdistg 2048
+        ifp palive
+          ifcansee
+            ifcanshoottarget
+              ai AICOOTRAISEGUN
+    }
+  }
+  // else count <= NN
+  else
+  {
+    iffloordistl 16
+    {
+      ifnotmoving
+        ai AICOOTGETENEMY
+    }
+    else
+      ai AICOOTGETENEMY
+    break
+  }
+// end COOTfleestate
+ends
+
+
+state checkcoothit
+  spawn BLOOD
+  ifdead
+  {
+    state random_wall_jibs
+    // state drop_ammo
+    addkills 1
+    ifwasweapon CROWBAR
+    {
+      state drop_pistol
+      spawn AMMO
+    }
+    ifwasweapon RIFLE
+    {
+      state drop_pistol
+    }
+    ifwasweapon SHOTGUN
+    {
+     state drop_pistol
+    }
+    ifwasweapon SHOTSPARK1
+    {
+     state drop_pistol
+    }
+    ifwasweapon CROSSBOW
+    {
+      state drop_ammo
+      sound SQUISHED
+      // state standard_jibs
+      state coot_jibs
+      killit
+    }
+    else
+      ifwasweapon RADIUSEXPLOSION
+    {
+      state drop_pistol
+      sound SQUISHED
+      spawn BLOODPOOL
+      // state standard_jibs
+      state coot_jibs
+      killit
+    }
+    else
+    {
+      // if wasn't blown up, leave body as
+      // solid so can be blown up
+      ai AICOOTDYING
+    }
+    sound CT_DIE
+  }
+  else
+  {
+    sound CT_PAIN
+    state random_wall_jibs
+
+    // If this is other type of Coot,
+    //  Have him duck back down behind the counter
+    //  if he's been shot
+    ifspritepal 31
+    {
+      ai AICOOTCROUCHDN
+    }
+    else
+    {
+      ifrnd 64
+      {
+        ai AICOOTPAIN
+      }
+      else ifrnd 64
+        ai AICOOTSHOOT
+      else ifrnd 64
+        ai AICOOTFALLDOWN
+      else
+        ai AICOOTDODGE
+    }
+  }
+ends
+
+
+state cootdyingstate
+  ifaction ACOOTLYINGDEAD
+  {
+    strength 0
+    ifhitweapon
+      ifwasweapon RADIUSEXPLOSION
+      {
+        sound SQUISHED
+        // state standard_jibs
+        state coot_jibs
+        killit
+        break
+      }
+  }
+  else ifai AICOOTDYING
+  {
+    ifactioncount 6
+    {
+      ifrnd 64
+        spawn BLOODPOOL
+      state bf
+      iffloordistl 8
+        sound THUD
+      move COOTSTOP
+      action ACOOTLYINGDEAD
+      break
+    }
+  }
+ends
+
+
+state cootdodgestate
+  ifactioncount 33
+    ai AICOOTGETENEMY
+ends
+
+state cootduckwalkstate
+  // Coots with special tags duckwalk more
+  // then Coots which wander around
+  ifspritepal 31
+  {
+    ifactioncount 23
+      ai AICOOTCROUCHUP
+  }
+  else
+  {
+    ifactioncount 13
+      ai AICOOTCROUCHUP
+  }
+ends
+
+state cootshootstate
+    ifactioncount 5
+    {
+      ai AICOOTLOWERGUN
+      break
+    }
+    ifcount 11
+      nullop
+    else ifcount 10
+    {
+        sound CASUL_FIRE
+        shoot RIFLE
+
+        resetcount
+    }
+
+ends
+
+// Actors ********************************************
+actor COOTSTAYPUT COOTSTRENGTH ACOOTDEFAULT
+        ai AICOOTGETENEMY
+        cactor COOT
+enda
+
+
+actor COOT COOTSTRENGTH ACOOTDEFAULT
+  fall
+  state checksquished
+
+  ifai 0
+  {
+    cstator 257
+    ai AICOOTGETENEMY
+  }
+
+  ifaction ACOOTLYINGDEAD
+  {
+    state cootdyingstate
+    break
+  }
+  else
+  {
+    ifai AICOOTGETENEMY
+    {
+      state cootseekstate
+    }
+    else ifai AICOOTCHARGEENEMY
+    {
+      state cootseekstate
+    }
+    else ifai AICOOTPAIN
+    {
+      ifcount 18
+        ai AICOOTGETENEMY
+    }
+    else ifai AICOOTDODGE
+    {
+        state cootdodgestate
+    }
+    else ifai AICOOTGETUP
+    {
+        ifactioncount 2
+           ai AICOOTGETENEMY
+    }
+    else ifai AICOOTFALLDOWN
+    {
+        ifactioncount 2
+           ai AICOOTGETUP
+    }
+    else ifai AICOOTCROUCHUP
+    {
+        ifactioncount 2
+           ai AICOOTGETENEMY
+    }
+    else ifai AICOOTCROUCHDN
+    {
+        ifactioncount 2
+           ai AICOOTDUCKWALK
+    }
+    else ifai AICOOTDUCKWALK
+    {
+        state cootduckwalkstate
+    }
+    else ifai AICOOTRAISEGUN
+    {
+      ifactioncount 2
+        ai AICOOTSHOOT
+    }
+    else ifai AICOOTLOWERGUN
+    {
+      ifactioncount 2
+      {
+        // If tagged Coot, duck back down behind
+        // counter when done shooting
+        ifspritepal 31
+        {
+           ai AICOOTCROUCHDN
+        }
+        // else get enemy
+        else
+          ai AICOOTGETENEMY
+      }
+    }
+    else ifai AICOOTFLEENEMY
+    {
+        state cootfleestate
+    }
+    else ifai AICOOTDYING
+    {
+        state cootdyingstate
+    }
+    else ifai AICOOTSHOOT
+    {
+        state cootshootstate
+    }
+  }
+
+  ifhittruck
+  {
+      ai AICOOTDYING
+  }
+  else ifhitweapon
+      state checkcoothit
+
+  // ifrnd 3
+  ifrnd 3
+  {
+      ifrnd 16
+        soundonce CT_LAF2
+      else ifrnd 16
+        soundonce CT_LAND
+  }
+enda
+
+// End of Use COOT
+

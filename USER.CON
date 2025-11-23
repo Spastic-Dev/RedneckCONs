@@ -1,0 +1,859 @@
+/*
+--------------------------------------------------------------------------------
+USER.CON file.
+--------------------------------------------------------------------------------
+
+IMPORTANT NOTICE IF YOU USE MODIFIED .CON FILES
+
+If you are playing a MULTIPLAY game and you are using
+*modified* .CON files then each multiplayer must be
+using the EXACT SAME .CON files, or the game will
+get out of sync and/or develop interesting problems.
+
+Xatrix encourages you to experiment freely with the parameters
+contained in this file, and to share your discoveries with the rest
+of the world.  However, BE ADVISED that Xatrix does NOT offer
+any technical support on how to use this file or other user-modifiable
+features of this game.  Do NOT call Xatrix or Interplay
+for advice or help with this subject.
+
+You make modifications to this and other files at your own risk.
+It is recommended that you first make a backup copy of this, or
+any .CON files before making any changes.
+--------------------------------------------------------------------------------
+*/
+
+// ******************
+// MISC GAME SETTINGS
+// ******************
+
+define CAMERASDESTRUCTABLE      NO               // YES
+define FREEZERHURTOWNER         YES
+
+define MAXPLAYERHEALTH          100
+define MAXWATERFOUNTAINHEALTH    50
+
+define YELLHURTSOUNDSTRENGTH     40
+define YELLHURTSOUNDSTRENGTHMP   50
+
+define MAXXSTRETCH 70
+define MAXYSTRETCH 70
+
+define MINXSTRETCH 9
+define MINYSTRETCH 8
+
+define MAXPLAYERECLAIRHEALTH    200     // doubles as maxarmor.
+define DOUBLEMAXPLAYERHEALTH    MAXPLAYERECLAIRHEALTH
+define STARTARMORHEALTH         0
+define RETRIEVEDISTANCE         844
+define SQUISHABLEDISTANCE       1024 // For actors only!
+define DEFAULTVISIBILITY        512
+define FROZENQUICKKICKDIST      980
+
+define GENERICIMPACTDAMAGE      10
+define SWEARFREQUENCY           255
+
+define MAXCASULAMMO             198
+define MAXSHOTGUNAMMO           50
+define MAXRIFLEAMMO             200
+define MAXCROSSBOWAMMO          30
+define MAXDYNAMITEAMMO          30
+define MAXTHROWSAWAMMO          30
+define MAXBUZSAWAMMO             1
+define MAXALIENBLASTERAMMO      99
+define MAXTITAMMO               200
+define MAXPOWDERKEGAMMO         1
+define MAXBOWLINGBALLAMMO       1
+define DILDOBLASERMODE          0     // 0 = always visible
+                                      // 1 = vibrating
+                                      // 2 = with whip
+                                      // 3 = totally invisible
+
+
+
+define RESPAWNACTORTIME         768
+define RESPAWNITEMTIME          768
+
+define QSIZE                    128   // total number of active
+                                      // bullet holes, blood,
+                                      // footprints, money, ect...
+                                      // (max 1024)
+
+define NUMFREEZEBOUNCES          3    // 0 - 255
+
+
+define RUNNINGSPEED 53200
+define GRAVITATIONALCONSTANT 176
+
+define PLAYDEADTIME 120
+
+define SHRUNKCOUNT 270
+define SHRUNKDONECOUNT 304
+
+define FROZENDRIPTIME 90
+define THAWTIME 138
+
+
+// Various blast radius distances
+
+define CROSSBOWBLASTRADIUS      1780
+define TNTRADIUS                2500
+define SHRINKERBLASTRADIUS      650
+define POWDERKEGBLASTRADIUS     3880
+define MORTERBLASTRADIUS        2500
+define BOUNCEMINEBLASTRADIUS    2500
+define SEENINEBLASTRADIUS       2048
+
+gamestartup     DEFAULTVISIBILITY GENERICIMPACTDAMAGE MAXPLAYERHEALTH
+		STARTARMORHEALTH  RESPAWNACTORTIME RESPAWNITEMTIME
+		RUNNINGSPEED GRAVITATIONALCONSTANT CROSSBOWBLASTRADIUS
+		TNTRADIUS SHRINKERBLASTRADIUS POWDERKEGBLASTRADIUS
+		MORTERBLASTRADIUS BOUNCEMINEBLASTRADIUS SEENINEBLASTRADIUS
+		MAXCASULAMMO MAXSHOTGUNAMMO MAXRIFLEAMMO
+		MAXCROSSBOWAMMO MAXDYNAMITEAMMO MAXTHROWSAWAMMO
+		MAXALIENBLASTERAMMO MAXPOWDERKEGAMMO MAXTITAMMO
+		MAXBUZSAWAMMO MAXBOWLINGBALLAMMO CAMERASDESTRUCTABLE
+		NUMFREEZEBOUNCES FREEZERHURTOWNER QSIZE DILDOBLASERMODE
+
+
+// Weapon Strengths
+define CROWBAR_WEAPON_STRENGTH          10
+define CASUL_WEAPON_STRENGTH            20
+define DYNAMITE_WEAPON_STRENGTH        140
+
+// For direct hits with the rocket launcher,
+// this amount is actually doubled.  Otherwise,
+// damage values depend on distance. The
+// further, the weaker.
+
+define CROSSBOW_WEAPON_STRENGTH         140
+
+define THROWSAW_WEAPON_STRENGTH         100
+define BUZSAW_WEAPON_STRENGTH           20
+
+define ALIENGISMO_WEAPON_STRENGTH       15
+define SHOTGUN_WEAPON_STRENGTH          10
+define RIFLE_WEAPON_STRENGTH            20
+define PLASMATHROWER_WEAPON_STRENGTH    10
+define COOL_EXPLOSION_STRENGTH          38
+define POWDERKEG_STRENGTH              100
+define FIRELASER_WEAPON_STRENGTH        25
+define MORTER_WEAPON_STRENGTH           50
+define BOUNCEMINE_WEAPON_STRENGTH      150
+define SHITBALL_WEAPON_STRENGTH          8
+define BULLET_WEAPON_STRENGTH           30
+define BOWLINGBALL_WEAPON_STRENGTH       5
+
+// Enemy strengths (hit points) and Damage inflicted
+
+define BILLYRAYSTRENGTH       100
+define VIXEN_STRENGTH         800
+define COOTSTRENGTH           50
+define MINIONSTRENGTH         50
+define MINIONFREAK            -10   // Damage to player when Minion blows up
+define COWSTRENGTH            50
+define PIGSTRENGTH            75    // Pigs are strong
+define PIG_GNAW_AMOUNT        -1    // Damage inflicted
+define LTHSTRENGTH            500
+define MOSQUITOSTRENGTH       1
+define HULKSTRENGTH           1200
+define HULKRESPAWNEDSTRENGTH  600
+define HULKWHACKAMOUNT        -22
+define VIXENWACKAMOUNT        -10
+define MEGASTRENGTH           10000
+
+define CASULAMMOAMOUNT        6
+define SHOTGUNAMMOAMOUNT      10
+define RIFLEAMMOAMOUNT        30
+define CROSSBOWAMMOBOX        5
+define CRYSTALAMMOAMOUNT      5
+define GROWCRYSTALAMMOAMOUNT  20
+define ALIENBLASTERAMMOAMOUNT 33
+define PLASMAAMMOAMOUNT       25
+define DYNAMITEBOX            5
+
+// Miscellaneous strengths.
+
+define WEAKEST           1
+define WEAK              5
+define MEDIUMSTRENGTH    10
+define TOUGH             20
+define REALLYTOUGH       30
+define JETHROSTRONG      45
+define GOTTASMART        90
+define HILLBILLYSTRENGTH 200
+
+define BEERDRINKERSTRENGTH  100
+
+
+// Players' inventory amounts.
+
+define MOONSHINE_AMOUNT        400
+define SHIELD_AMOUNT           100
+define SCUBA_AMOUNT            6400
+define HEAT_AMOUNT             1200
+define COWPIE_AMOUNT           600
+define BEER_AMOUNT             2400
+define WHISKEY_AMOUNT          MAXPLAYERHEALTH
+define BOOT_AMOUNT             2000
+
+define SPAWNAMMOODDS             96
+
+
+// Maximum quote size is 64 characters.
+// Maximum quotes is 192 slots.
+
+
+definequote  0        AUTO AIMIN'...
+definequote  1        SHOW YER MAP: OFF
+definequote  2        TURNED ON!
+definequote  3        CHEAP ASS WHISKEY...
+definequote  4        LOCKED!
+definequote  5        TAKE IT ALL!
+definequote  6        HIP WADERS...
+definequote  7        WASTED!
+definequote  8        UNLOCKED
+definequote  9        YER SECRET PLACE!
+definequote 10        SQUASHED LIKE A BUG!
+definequote 11        ALL DOORS UNLOCKED
+definequote 12        YOU'S ON A RAMPAGE!!!
+definequote 13        MASH ACTIVATOR KEY TO KILL AGAIN!
+definequote 14        AMMO FOR ALIEN ARM GUN!!!
+definequote 15        TURNED OFF...
+definequote 16        SWITCH OPERATED ONLY!
+definequote 17        ELVIS LIVES!
+definequote 18        THE KING IS DEAD!
+definequote 19        DEE-LISHUS GOO GOO CLUSTER!
+definequote 20        WUSSY AIMIN' DEVICE: ON
+definequote 21        WUSSY AIMIN' DEVICE: OFF
+definequote 22        HELL, I THOUGHT YOU WAS A KILLBILLY!
+definequote 23        WRITIN': ON
+definequote 24        WRITIN': OFF
+definequote 25        TYPE THE CHEAT CODE:
+definequote 26        DETAIL: LOW
+definequote 27        DETAIL: HIGH
+definequote 28        < EMPTY >
+definequote 29        BRIGHTNESS LEVEL: ONE
+definequote 30        BRIGHTNESS LEVEL: TWO
+definequote 31        BRIGHTNESS LEVEL: THREE
+definequote 32        BRIGHTNESS LEVEL: FOUR
+definequote 33        BRIGHTNESS LEVEL: FIVE
+definequote 34        YER SOUND: ON
+definequote 35        YER SOUND: OFF
+definequote 36        YER SCREEN CAPTURED AND JAILED!
+definequote 37        XXX MOONSHINE!
+definequote 38        < EMPTY >
+definequote 39        VACUUM CLEANER HOSE SNORKEL SYSTEM
+definequote 40        PRESS F1 FER HELP
+definequote 41        AIN'T GOT THE KEY!
+definequote 42        < EMPTY >
+definequote 43        SKELETON KEY!
+definequote 44        RAT AIMIN' OFF
+definequote 45        RAT AIMIN' ON
+definequote 46        CHEAT CODE:  UNRECOGNIZED
+definequote 47        TEAT GUN AMMO !
+definequote 48        RIPSAW AMMO !
+definequote 49        CHEATER! YOU USED THE
+definequote 50        CHEAT TO COME BACK ALIVE
+definequote 51        < EMPTY >
+definequote 52        < EMPTY >
+definequote 53        NO SAVIN' OR LOADIN' FER PSYCO
+definequote 54        HUNTIN' RIFLE!
+definequote 55        DYN-O-MITE!
+definequote 56        CROSSBOW!
+definequote 57        YER SCATTERGUN!
+definequote 58        POWDER KEG!
+definequote 59        ALIEN TEAT GUN!
+definequote 60        BOWLING BALL!!
+definequote 61        RIPSAW!!
+definequote 62        LARGE PORK RINDS!
+definequote 63        AMMO FOR RIFLE!
+definequote 64        AMMO FOR CROSSBOW!
+definequote 65        SPEEDLOADER!
+definequote 66        < EMPTY >
+definequote 67        HIP WADERS OFF
+definequote 68        HIP WADERS ON
+definequote 69        YER SCATTERGUN SHELLS!
+definequote 70        SOME KIND OF KEY REQUIRED
+definequote 71        SOME OTHER KIND OF KEY REQUIRED
+definequote 72        YET EVEN ANOTHER KIND OF KEY REQUIRED
+definequote 73        YER WEAPON LOWERED
+definequote 74        YER WEAPON RAISED
+definequote 75        HIP WADERS ON
+definequote 76        VACCUM CLEANER HOSE SNORKEL ON!
+definequote 77        < EMPTY >
+definequote 78        < EMPTY >
+definequote 79        < EMPTY >
+definequote 80        < EMPTY >
+definequote 81        WEAPON MODE ON
+definequote 82        WEAPON MODE OFF
+definequote 83        FOLLOW MODE OFF
+definequote 84        FOLLOW MODE ON
+definequote 85        HAULIN' ASS MODE OFF...
+definequote 86        HAULIN' ASS MODE ON!!!
+definequote 87        ALIEN ARM GUN
+definequote 88        COW PIE!
+definequote 89        VACUUM CLEANER SNORKLE
+definequote 90        XXX MOONSHINE
+definequote 91        BEER
+definequote 92        MUSIC: ON
+definequote 93        MUSIC: OFF
+definequote 94        SCROLL MODE: ON
+definequote 95        SCROLL MODE: OFF
+definequote 96        BRIGHTNESS LEVEL: SIX
+definequote 97        BRIGHTNESS LEVEL: SEVEN
+definequote 98        BRIGHTNESS LEVEL: EIGHT
+definequote 99        FOR YOU GRANDPA!
+definequote 100       ALL LOCKS TOGGLED
+definequote 101       < EMPTY >
+definequote 102       WHAT THE!
+definequote 103       SCREEN SAVED
+definequote 104       < EMPTY >
+definequote 105       YOU WERE ALL WRONG!
+definequote 106       GOOD'N!
+definequote 107       BAD'N...
+definequote 108       YOU'RE BURNIN'!
+definequote 109       VIEW MODE OFF
+definequote 110       VIEW MODE ON
+definequote 111       SHOW MAP: ON
+definequote 112       CLIPPIN': OFF
+definequote 113       CLIPPIN': ON
+definequote 114       !!! INCORRECT VERSION !!!
+definequote 115       <Please Leave Blank>
+definequote 116       <Please Leave Blank>
+definequote 117       <Please Leave Blank>
+definequote 118       YOU CANNOT "QUICK SAVE" WHEN DEAD
+definequote 119       GOT ALL WEAPONS/AMMO
+definequote 120       GOT ALL INVENTORY
+definequote 121       GOT ALL KEYS
+definequote 122       <Please Leave Blank>
+definequote 123       < EMPTY >
+definequote 124       MAP HAS A DIFFERENT NUMBER OF PLAYERS
+definequote 125       YOU DONE KILLED 'EM ALL!
+
+
+
+// Volume titles cannot excede 32 characters.
+
+definevolumename 0 OUTSKIRTS
+definevolumename 1 DOWNTOWN
+definevolumename 2 PISSIN' CONTEST
+
+// Skill titles cannot excede 32 characters.
+
+defineskillname 0 WUSS
+defineskillname 1 MEEJUM
+defineskillname 2 HARD ASS
+defineskillname 3 KILLBILLY
+defineskillname 4 PSYCHOBILLY
+
+// Level file names cannot excede 128 characters.
+// Level par cannot excede 5 characters (min:sec)
+// Level titles cannot excede 32 characters.
+
+definelevelname 0 0 E1L1.map 03:50 01:49 TAYLOR TOWN
+definelevelname 0 1 E1L2.map 06:15 04:13 LUMBERLAND
+definelevelname 0 2 E1L3.map 04:10 02:11 JUNKYARD
+definelevelname 0 3 E1L4.map 05:00 03:02 DRIVE-IN
+definelevelname 0 4 E1L5.map 05:15 03:15 DAIRYAIR FARMS
+definelevelname 0 5 E1L6.map 03:10 01:03 SEWERS
+definelevelname 0 6 E1L7.map 06:50 04:49 SMELTIN' PLANT
+
+definelevelname 1 0 E2L1.map 06:15 04:12 DOWNTOWN HICKSTON
+definelevelname 1 1 E2L2.map 05:00 03:01 NUT HOUSE
+definelevelname 1 2 E2L3.map 04:45 02:32 J.CLUCK'S!
+definelevelname 1 3 E2L4.map 07:50 05:53 THE RUINS
+definelevelname 1 4 E2L5.map 04:00 02:02 GRIMLEY'S MORTUARY
+definelevelname 1 5 E2L6.map 10:00 08:13 URANIUM MINES
+definelevelname 1 6 E2L7.map 07:10 04:55 BEAUDRY MANSION
+
+definelevelname 2 0 E3L1.map 00:00 00:00 COUNTRY LIVIN'
+definelevelname 2 1 E3L2.map 00:00 00:00 BARNYARD HIJINKS
+definelevelname 2 2 E3L3.map 00:00 00:00 CONDEMNED
+definelevelname 2 3 E3L4.map 00:00 00:00 USED CARS
+definelevelname 2 4 E3L5.map 00:00 00:00 TRAINSPOTTING
+definelevelname 2 5 E3L6.map 00:00 00:00 MUD ALLEY!
+definelevelname 2 6 E3L7.map 00:00 00:00 THE FACTORY
+
+/*
+--------------------------------------------------------------------------------
+ABOUT CHANGING SOUND FX
+
+The sound fx section follows this explanation.
+
+1. The program expects to find any sound file that is in a
+   .VOC or .WAV file format.
+2. You can either change the VOC name listed below to match your new
+   sound, or you can rename your file to match the name here.
+3. New sound files should be added to the game directory.  Though
+   all sound files shipped with the game are included inside the
+   .GRP file, the program will know if there are sound files outside
+   the .GRP file, and will use them instead.
+4. The numbers that are to the right of the sound file name are technical
+   parameters which will not be explained here, except as follows...
+   - The first 2 numbers define a random pitch variation range.  They
+     can be positive or negative numbers.
+   - The 3rd number is a priority flag.
+   - The 4th number is a bit parsed set of technical variables that identify
+     the type of sound it is in the game.
+   - The 5th number is volume adjustment.
+5. Rampage may have up to 410 total sound definitions.
+--------------------------------------------------------------------------------
+*/
+
+// *****************************************
+//      ACTOR SOUNDS
+// *****************************************
+
+// BIT 0 (1) Repeat
+// BIT 1 (2) MUSICANDSFX (used for)
+// BIT 2 (4) A Leonard Voice
+// BIT 3 (8) Par. Lockout
+// BIT 4 (16) Glob. Heard (sndist = 0)
+
+// COOT
+definesound CT_LAF2      ct_laf.voc   0     0    3    0    0
+definesound CT_LAND      ct_land.voc  0     0    3    0    0
+definesound CT_GET       ct_get.voc   0     0    3    0    0
+definesound CT_LAF       ct_laf.voc   0     0    3    0    0
+definesound CT_PAIN      ct_pain.voc  0     0    3    0    0
+definesound CT_DIE       ct_die.voc   0     0    3    0    0
+
+// HULK
+definesound HULK_ROAM    hulkroam.voc -128  128  3    0    0
+definesound HULK_RECOG   hulkrecg.voc 1400  0    3    0    0
+definesound HULK_ATTACK  hulkattk.voc -150  150  3    0    0
+definesound HULK_PAIN    hulkpain.voc -256  256  3    0    0
+definesound HULK_DYING   hulkdie.voc  1200  100  3    0    0
+definesound HULK_SPIT    hulkspit.voc -128  128  0    0    0
+definesound LASERH       lasera.voc   0     0    0    0    0
+
+// BILLY RAY
+definesound BR_ROAM1     br_roam1.voc 0     0    3    0    0
+definesound BR_ROAM2     br_roam2.voc 0     0    3    0    0
+definesound BR_ROAM3     br_roam3.voc 0     0    3    0    0
+definesound BR_RECOG     br_recog.voc 0     0    3    0    0
+definesound BR_PAIN      br_pain.voc  0     0    3    0    0
+definesound BR_DTH       br_dth.voc   0     0    3    0    0
+
+definesound BR_ITCH      br_itch.voc  0     0    3    0    0
+definesound BR_SCRTH     br_scrth.voc 0     0    3    0    0
+definesound BR_SNIFF     br_sniff.voc 0     0    3    0    0
+
+// TURD MINION
+definesound MN_FREAK     mn_freak.voc 0     0    0    0    0
+definesound MN_PN        mn_pn.voc    0     0    0    0    0
+definesound MN_REC       mn_rec.voc   0     0    0    0    0
+definesound MN_AMB       mn_amb.voc   0     0    0    0    0
+
+// COW
+definesound COW1         cow1.voc     0     0    0    0    0
+definesound COW2         cow2.voc     0     0    0    0    0
+definesound COW3         cow3.voc     0     0    0    0    0
+definesound COW4         cow4.voc     0     0    0    0    0
+definesound COW5         cow5.voc     0     0    0    0    0
+
+// PIG
+definesound PIGSOUND1    pg_pain2.voc 0     0    0    0    -3000
+definesound PIGSOUND2    pg_pain1.voc 0     0    0    0    -3000
+definesound PIGSOUND3    pg_grnt1.voc 0     0    0    0    -3000
+definesound PIGSOUND4    pg_eat.voc   0     0    0    0    -3000
+definesound PIGSOUND5    pg_die.voc   0     0    0    0    -3000
+definesound PIGSOUND6    pg_atck2.voc 0     0    0    0    0
+definesound PIGSOUND7    pg_atck1.voc 0     0    0    0    0
+
+// VIXEN
+definesound VX_DIE1      vx_die1.voc  0     0    0    0    0
+definesound VX_DIE4      vx_die4.voc  0     0    0    0    0
+definesound VX_DIE5      vx_die5.voc  0     0    0    0    0
+definesound VX_DIE6      vx_die6.voc  0     0    0    0    0
+definesound VX_DIE7      vx_die7.voc  0     0    0    0    0
+definesound VX_OOH       vx_ooh.voc   0     0    0    0    0
+definesound VX_PAIN1     vx_pain1.voc 0     0    0    0    0
+definesound VX_SEX1      vx_sex1.voc  0     0    0    0    0
+definesound VX_SEX2      vx_sex2.voc  0     0    0    0    0
+definesound VX_SEX3      vx_sex3.voc  0     0    0    0    0
+definesound VX_GRNT      vx_grnt.voc  0     0    0    0    0
+definesound VX_ISTHT     vx_istht.voc 0     0    0    0    0
+definesound VX_TAKIT     vx_takit.voc 0     0    0    0    0
+
+definesound VX_BRNG3     vx_brng3.voc 0     0    0    0    0
+definesound VX_CLSR1     vx_clsr1.voc 0     0    0    0    0
+definesound VX_CLSR2     vx_clsr2.voc 0     0    0    0    0
+definesound VX_2FAR      vx_2far.voc  0     0    0    0    0
+definesound VX_BRING     vx_bring.voc 0     0    0    0    0
+definesound VX_BITE      vx_bite.voc  0     0    0    0    0
+definesound VX_LAFF2     vx_laff2.voc 0     0    0    0    0
+definesound VX_LAFF3     vx_laff3.voc 0     0    0    0    0
+definesound VX_HMMM2     vx_hmmm2.voc 0     0    0    0    0
+definesound VX_HURT2     vx_hurt2.voc 0     0    0    0    0
+definesound VX_BABY2     vx_baby2.voc 0     0    0    0    0
+definesound VX_MHMM      vx_mhmm.voc  0     0    0    0    0
+definesound VX_ITSOK     vx_itsok.voc 0     0    0    0    0
+definesound VX_TPOT4     vx_tpot4.voc 0     0    0    0    0
+definesound VX_TPIN2     vx_tpin2.voc 0     0    0    0    0
+definesound VX_TPIN4     vx_tpin4.voc 0     0    0    0    0
+definesound VX_HLPME     vx_hlpme.voc 0     0    0    0    0
+definesound VX_KICK2     vx_kick2.voc 0     0    0    0    0
+definesound VX_KICK3     vx_kick3.voc 0     0    0    0    0
+definesound VX_HIYA      vx_hiya.voc  0     0    0    0    0
+definesound VX_HIYA2     vx_hiya2.voc 0     0    0    0    0
+definesound VX_FINAL     vx_final.voc 0     0  255    0    0
+
+// SHERIFF
+definesound SF_ATTN      sf_attn.voc  0     0    0    0    0
+definesound SF_DETH1     sf_deth1.voc 0     0    0    0    0
+definesound SF_DETH2     sf_deth2.voc 0     0    0    0    0
+definesound SF_DETH3     sf_deth3.voc 0     0    0    0    0
+definesound SF_FREZ2     sf_frez2.voc 0     0    0    0    0
+definesound SF_GETYA     sf_getya.voc 0     0    0    0    0
+definesound SF_HANDS     sf_hands.voc 0     0    0    0    0
+definesound SF_HEY       sf_hey.voc   0     0    0    0    0
+definesound SF_HOLD      sf_hold.voc  0     0    0    0    0
+definesound SF_LAFF1     sf_laff1.voc 0     0    0    0    0
+definesound SF_NAME      sf_name.voc  0     0    0    0    0
+definesound SF_OVER      sf_over.voc  0     0    0    0    0
+definesound SF_PAIN1     sf_pain1.voc 0     0    0    0    0
+definesound SF_PAIN2     sf_pain2.voc 0     0    0    0    0
+definesound SF_PAIN3     sf_pain3.voc 0     0    0    0    0
+definesound SF_RLOAD     sf_rload.voc 0     0    0    0    0
+definesound SF_RLOD2     sf_rlod2.voc 0     0    0    0    0
+definesound SF_SHOOT     sf_shoot.voc 0     0    0    0    0
+definesound SF_THLAW     sf_thlaw.voc 0     0    0    0    0
+definesound SF_TLAW2     sf_tlaw2.voc 0     0    0    0    0
+
+// ********
+// WEAPON SOUNDS
+// ********
+definesound KICK_HIT     hit-u.voc    0     0    4    0    0
+definesound RICOCHET     ricochet.voc 0     0    0    0    4096
+definesound BULITHIT     bulithit.voc 0     0    0    0    0
+definesound CASUL_FIRE   pistola.voc  -64   0    254  0    0
+definesound PISCOCK      piscock.voc  0     0    3    0    0
+definesound PISLOAD      pisload.voc  512   512  3    0    0
+definesound AK3          ak3.voc      0     0    254  0    512
+definesound SHOT6        shot6.voc    0     0    254  0    0
+definesound GUNCHANG     gunchang.voc 96    192  3    0    0
+definesound XBOWFIRE     xbowfire.voc -32   0    4    0    0
+definesound XBOWEXPL     xbowexpl.voc -500  500  128  0    0
+definesound XBOWCOCK     xbowcock.voc -500  500  128  0    0
+definesound LASERA       lasera.voc   512   768  4    0    0
+definesound SHRINKER     shrinker.voc -512  0    5    0    0
+
+definesound DYNOCLMP     dynoclmp.voc 0     0    2    0    0
+definesound KILLME       ln_pain1.voc -128  0    0    0    0
+
+
+definesound DYNEW        dynew.voc    0     0    128  0    0
+definesound BOMBEXPL     bombexpl.voc -512  0    4    0    0
+
+// Affect Environment Sounds
+definesound VENTBUST     ventbust.voc -32   32   2    0    0
+definesound GLASSSND     glass.voc    -412  0    3    0    8192
+definesound GLASSHVY     glass.voc    -412  0    3    0    8192
+
+definesound SPLASH       splash.voc   0     0    2    0    0
+
+
+// LNRD's Body Sounds
+definesound GASP         gasp.voc     0     0    255  4    0
+
+definesound LN_SLOW      ln_slow.voc  0     0    255  4    0
+definesound LN_WAIT      ln_wait.voc  0     0    255  4    0
+definesound JUG          jug.voc      0     0    255  0    0
+definesound LN_HUSH      ln_hush.voc  0     0    255  4    0
+definesound LN_HOLD      ln_hold.voc  0     0    255  4    0
+definesound LN_HOTDM     ln_hotdm.voc 0     0    255  4    0
+definesound LN_STINK     ln_stink.voc 0     0    255 12    0
+definesound LN_BBQ       ln_bbq.voc   0     0    255  4    0
+definesound LN_BACON     ln_bacon.voc 0     0    255  4    0
+
+definesound LN_PAIN4A    ln_pain4.VOC 0     0    2    4    0
+definesound LN_PAIN2     ln_pain2.voc 0     0    255  4    0
+definesound LN_PAIN3     ln_pain3.voc 0     0    255  4    0
+definesound LN_PAIN4     ln_pain4.voc 0     0    255  4    0
+definesound LN_PAIN5     ln_pain5.voc 0     0    255  4    0
+definesound LN_PAIN6     ln_pain6.voc 0     0    255  4    0
+definesound LN_PAIN7     ln_pain7.voc 0     0    255  4    0
+definesound LN_PAIN8     ln_pain8.voc 0     0    255  4    0
+definesound LN_FINAL     ln_final.voc 0     0    255  4    0
+definesound LN_CRAP      ln_crap.voc  0     0    255  4    0
+
+
+// LNRD Health Sounds
+definesound LN_STANK     ln_stank.voc 0     0    255  12   0
+definesound LN_BITCH     ln_bitch.voc 0     0    255  12   0
+
+definesound LN_BNCH      ln_bnch.voc  0     0    255  4    0
+definesound LNRD_KILLED4 ln_jesus.voc 0     0    255  12   0
+definesound LNRD_KILLED5 ln_stank.voc 0     0    255  12   0
+
+definesound LNRD_GRUNT   ln_pain4.voc 0     0    2    4    0
+definesound LNRD_DEAD    ln_pain1.VOC 0     0    255  4    0
+
+// all of Leonard's Killing comments
+definesound JIBBED1      ln_jesus.voc 0     0    255  12   0
+definesound JIBBED2      ln_shit.voc  0     0    255  12   0
+definesound JIBBED3      ln_fried.voc 0     0    255  4    0
+definesound JIBBED4      ln_sob.voc   0     0    255  12   0
+definesound JIBBED5      ln_blow.voc  0     0    255  12   0
+definesound JIBBED6      yeehaa2.voc  0     0    255  4    0
+definesound JIBBED7      ln_grass.voc 0     0    255  4    0
+definesound JIBBED8      ln_bust.voc  0     0    255  12   0
+definesound JIBBED9      ln_lktht.voc 0     0    255  12   0
+definesound JIBBED10     ln_bust.voc  0     0    255  12   0
+definesound JIBBED11     ln_busy.voc  0     0    255  12   0
+definesound JIBBED12     ln_blow.voc  0     0    255  4    0
+definesound JIBBED13     ln_fkyou.voc 0     0    255  4    0
+definesound LN_FLYOP     ln_flyop.voc 0     0    255  12   0
+definesound LN_SHTHD     ln_shthd.voc 0     0    255  12   0
+definesound LN_RODE      ln_rode.voc  0     0    255  4    0
+
+definesound WHIPYOU      yeehaa2.voc  0     0    255  4    0
+
+// LNRD Movement Sounds
+definesound WETFEET      wetfeet.voc  0     0    4    0    0
+definesound LAND         land.voc     0     0    2    0    0
+definesound LN_LNDHT     ln_pain4.voc 0     0    255  4    0
+
+
+definesound BNS_SPCH1    ln_shit.voc  0     0    255  12   0
+definesound BNS_SPCH2    ln_jesus.voc 0     0    255  12   0
+definesound BNS_SPCH3    ln_hotdm.voc 0     0    255  4    0
+definesound BNS_SPCH4    yeehaa2.voc  0     0    255  4    0
+
+definesound JUGALUG7     jugalug7.voc 0     0    255  4    0
+definesound DIDDLP       diddlp.voc   0     0    255  4    0
+definesound SHRNK_HIT    thud.voc     0     0    3    0    0
+definesound LN_SCREW     ln_screw.voc 0     0    3    0    0
+
+// LNRD Equipment Sounds
+definesound SCUBA        scuba.voc    0     0    2    0    0
+definesound TRUCK_LP     truck_lp.voc 0     0    4    0    0
+definesound TRUCK_LP2    truck_lp.voc 0     0    4    0    0
+
+// Common Death Sounds
+definesound FIRE09       fire09.voc   -256  0    0    2    6100
+definesound THUD         thud.voc     0     0    0    0    0
+definesound SQUISHED     jib.voc      -128  0    3    0    0
+
+// Equipment Sounds
+definesound TELEPORT     teleport.voc 0     0    0    0    0
+definesound GBELEV01     gbelev01.voc 0     0    0    0    0
+definesound GBELEV02     gbelev02.voc 0     0    0    0    0
+definesound SWITCH1      switch1.voc  0     0    0    0    0
+
+definesound FAN          fan.voc      0     0    0    0    0
+definesound FLUSH        flush.voc    0     0    3    0    0
+
+definesound QUAKE        quake.voc    0     0    0    0    0
+
+
+// Ambience SOUNDS
+
+definesound DRIP3        drip3.voc    0     0    0    2    0
+definesound JUKEBOX      jukebox.voc  0     0    254  3    0
+definesound DSCREM04     DSCREM04.voc 0     0    0    0    0
+
+
+// Miscellaneous Sounds
+
+definesound DR_CRK8      dr_crk8.voc  -256  0    0    0    0
+definesound DR_ROLL      dr_roll.voc  -256  0    0    0    0
+definesound MONITOR      monitor.voc  0     0    0    0    0
+definesound MONITORA     monitor.voc  0     0    0    0    0
+definesound EXITMENU     jug.voc      0     0    0    0    0
+
+definesound INTOMENU     bulithit.voc -1024 1024 0    0    0
+definesound RESIZE       jug.voc      0     0    0    0    0
+definesound SCREAM_F     scream_f.voc 0     0    0    0    0
+definesound SCREAM_M     scream_m.voc 0     0    0    0    0
+definesound WHISPER      whisper.voc  0     0    0    0    0
+definesound OVEN         oven.voc     0     0    0    2    0
+definesound CREMATOR     cremator.voc 0     0    0    2    0
+definesound TBLSAW       tblsaw.voc   0     0    0    2    0
+definesound TBLSAW_X     tblsaw_x.voc 0     0    0    2    0
+definesound FORKLIFT     forklift.voc 0     0    0    2    0
+definesound PROJECTR     projectr.voc 0     0    0    2    0
+definesound SIGNROT      signrot.voc  0     0    0    2    0
+definesound PWDERKEG     pwderkeg.voc 0     0    0    0    0
+definesound DG_BARK1     dg_bark1.voc -200  200  0    0    0
+definesound DG_BARK2     dg_bark2.voc -200  200  0    0    0
+definesound DG_GRWL1     dg_grwl1.voc -100  100  0    0    -4000
+definesound DG_GRWL2     dg_grwl2.voc -100  100  0    0    -4000
+definesound DG_YELP      dg_yelp.voc  0     0    0    0    0
+definesound DG_DIE       dg_die.voc   0     0    0    0    0
+definesound DG_LUNGE     dg_lunge.voc -200  200  0    0    -1800
+
+definesound UFO          ufo.voc      0     0    0    2    0
+definesound UFOLET       ufolet.voc   0     0    0    2    0
+definesound EGG          egg.voc      0     0    0    0    0
+definesound HAMCAN       hamcan.voc   0     0    0    0    0
+definesound DROPPIE      droppie.voc  0     0    0    0    0
+definesound BIGDRILL     bigdrill.voc 0     0    0    0    0
+definesound MINECART     minecart.voc 0     0    0    2    0
+definesound ONECART      onecart.voc  0     0    0    2    0
+definesound MINEWIND     minewind.voc 0     0    0    2    0
+definesound WTRFALL      wtrfall.voc  0     0    0    2    0
+definesound SHAFT        shaft.voc    0     0    0    2    0
+definesound FRIDGEOP     fridgeop.voc 0     0    0    0    0
+definesound FRIDGECL     fridgecl.voc 0     0    0    0    0
+definesound SCRAPE_1     scrape_1.voc 0     0    0    0    0
+definesound URANUS       uranus.voc   0     0    0    0    0
+definesound CRAPFLOW     crapflow.voc 0     0    0    2    0
+definesound CRAPSTIR     crapstir.voc 0     0    0    2    0
+definesound BRICDOOR     bricdoor.voc 0     0    0    0    0
+definesound BUBBLES      bubbles.voc  0     0    0    2    0
+definesound COMPUTER     computer.voc 0     0    0    2    0
+definesound NEON         neon.voc     0     0    0    2    0
+definesound CLOCKTK      clocktk.voc  0     0    0    2    0
+definesound CLOCKCHM     clockchm.voc 0     0    0    0    0
+definesound END_PIPE     end_pipe.voc 0     0    0    2    0
+definesound ICARUMBA     icarumba.voc 0     0    0    2    0
+definesound ASYAMB       asyamb.voc   0     0    0    2    0
+definesound HARPSIC      harpsic.voc  0     0    0    2    0
+definesound UFOINSID     ufoinsid.voc 0     0    0    2    0
+
+
+// Six miscambience Sounds
+
+definesound FLIES        flies.voc    0     0    0    2    0
+definesound AMB_1        amb_1.voc    0     0    0    2    0
+definesound GRAVAMB      gravamb.voc  0     0    0    2    0
+definesound HOOTOWL      hootowl.voc  0     0    0    2    0
+definesound WOODS2       woods2.voc   0     0    0    2    0
+definesound CATAMB       catamb.voc   0     0    0    2    0
+definesound CNTAMB       cntamb.voc   0     0    0    2    0
+definesound JUNKAMB2     junkamb2.voc 0     0    0    2    0
+definesound AMB_ROOM     amb_room.voc 0     0    0    2    0
+definesound GRIND        grind.voc    0     0    0    0    0
+
+definesound CRICKET1     cricket1.voc 0     10   0    0    -1800
+definesound CRICKET2     cricket2.voc 0     10   0    0    -1800
+definesound PIGRUNT      pigrunt.voc  0     0    0    0    0
+
+definesound THUNDER1     thunder1.voc 0     0    0    0    0
+definesound THUNDER2     thunder2.voc 0     0    0    0    0
+definesound THUNDER3     thunder3.voc 0     0    0    0    0
+
+definesound DR_CLS       dr_cls.voc   0     0    0    0    0
+definesound LN_TIGHT     ln_tight.voc 0     0    0    0    0
+
+definesound YEHAA16      yeehaa2.voc  0     0    255  4    0
+definesound LN_WHUP      ln_whup.voc  0     0    3    0    0
+
+definesound CHKNFLAP     chknflap.voc -200  400  3    0    0
+definesound CHKN_1       chkn_1.voc   -200  400  3    0    0
+definesound CHKN_2       chkn_2.voc   -200  400  3    0    0
+definesound CHIKDETH     chikdeth.voc -200  400  3    0    0
+
+definesound TRUKDIE      trukdie.voc  0     0    0    0    0
+definesound ZIPOPEN      zipopen.voc  0     0    0    0    0
+definesound ZIPPSTRK     zippstrk.voc 0     0    0    0    0
+
+definesound MOSQUI4      mosqui4.voc  0     0    0    2    0
+definesound FART1        fart1.voc    0     0    0    0    0
+definesound SQUEAKY      squeaky.voc  0     0    0    0    0
+definesound CATDOOR      catdoor.voc  0     0    0    0    0
+definesound JUNKSWCH     junkswch.voc 0     0    0    0    0
+definesound CONVEYR      conveyr.voc  0     0    0    2    0
+definesound LOKDOOR      lokdoor.voc  0     0    0    0    0
+
+definesound VOMIT        vomit.voc    0     0    0    0    0
+definesound TOSS         toss.voc     0     0    0    0    0
+definesound FART2        fart2.voc    0     0    0    0    0
+definesound FART3        fart3.voc    0     0    0    0    0
+definesound FART4        fart4.voc    0     0    0    0    0
+definesound CHUG         chug.voc     0     0    0    0    0
+definesound CROWUSH      crowush.voc  0     0    0    0    0
+definesound WUSSLAF      wusslaf.voc  0     0    0    0    0
+definesound LN_CITY      ln_city.voc  0     0    0    0    0
+definesound MUNCH2       munch2.voc   0     0    0    0    0
+definesound TESLARC      teslarc.voc  0     0    0    2    0
+
+definesound AS_DROPN     as_dropn.voc 0     0    0    0    0
+definesound AS_CRYPT     as_crypt.voc 0     0    0    0    0
+definesound AS_DRCLS     as_drcls.voc 0     0    0    0    0
+definesound LOKGATE      lokgate.voc  0     0    0    0    0
+definesound METLGAT2     metlgat2.voc 0     0    0    0    0
+definesound METLGAT1     metlgat1.voc 0     0    0    0    0
+definesound AS_AMB2      as_amb2.voc  0     0    0    2    0
+definesound AS_AMB1      as_amb1.voc  0     0    0    2    0
+
+definesound BUZSAWSND    buzsaw.voc   -512  0    5    0    0
+definesound TORNADOSND   tornado.voc  -512  0    0    2    0
+
+definesound BOWLSTRT     bowlstrt.voc -512  0    0    0    0
+definesound BOWLPIN      bowlpin.voc  -512  0    0    0    0
+definesound BOWLLOOP     bowlloop.voc -512  0    0    0    0
+
+definesound PISSEND      pissend.voc  0     0    0    0    0
+definesound PISSLOOP     pissloop.voc 0     0    0    0    0
+definesound PISSSTRT     pissstrt.voc 0     0    0    0    0
+definesound CRAP         crap.voc     0     0    0    0    0
+definesound PEE          pee.voc      0     0    0    0    0
+definesound ELEVLOOP     elevloop.voc 0     0    0    2    0
+
+
+definesound CRUSHER      crusher.voc  0     0    0    2    0
+definesound PLUCKER      plucker.voc  0     0    0    2    0
+definesound SAWHEAD      sawhead.voc  0     0    0    2    0
+definesound STAMPER      stamper.voc  0     0    0    2    0
+definesound TBLSAW_D     tblsaw_d.voc 0     0    0    0    0
+definesound MORNING      morning.voc  0     0    0    2    0
+
+
+
+definesound SB_ATK1      sb_atk1.voc  0     0    0    0    0
+definesound SB_ATK2      sb_atk2.voc  0     0    0    0    0
+definesound SB_CORN      sb_corn.voc  0     0    0    0    0
+definesound SB_HRT1      sb_hrt1.voc  0     0    0    0    0
+definesound SB_HRT2      sb_hrt2.voc  0     0    0    0    0
+definesound SB_HRT3      sb_hrt3.voc  0     0    0    0    0
+definesound SB_LAF1      sb_laf1.voc  0     0    0    0    0
+definesound SB_LAF2      sb_laf2.voc  0     0    0    0    0
+definesound SB_LORD      sb_lord.voc  0     0    0    0    0
+definesound SB_MIN1      sb_min1.voc  0     0    0    0    0
+definesound SB_MIN2      sb_min2.voc  0     0    0    0    0
+definesound SB_MIN3      sb_min3.voc  0     0    0    0    0
+definesound SB_SCK1      sb_sck1.voc  0     0    0    0    0
+definesound SB_SPT1      sb_spt1.voc  0     0    0    0    0
+definesound SB_SPT2      sb_spt2.voc  0     0    0    0    0
+definesound SB_DIE       sb_die.voc   0     0    0    0    0
+definesound SB_IAM       sb_iam.voc   0     0    0    0    0
+definesound SB_POO       sb_poo.voc   0     0    0    0    0
+definesound BUB_HEY1     bub_hey1.voc 0     0    0    0    0
+definesound BUB_HEY2     bub_hey2.voc 0     0    0    0    0
+definesound BUB_HRT1     bub_hrt1.voc 0     0    0    0    0
+definesound BUB_HRT2     bub_hrt2.voc 0     0    0    0    0
+definesound BUB_HRT3     bub_hrt3.voc 0     0    0    0    0
+definesound BUB_HRT4     bub_hrt4.voc 0     0    0    0    0
+definesound BUB_LN1      bub_ln1.voc  0     0    0    0    0
+definesound BUB_LN2      bub_ln2.voc  0     0    0    0    0
+definesound BUB_LN3      bub_ln3.voc  0     0    0    0    0
+definesound BUB_LN5      bub_ln5.voc  0     0    0    0    0
+definesound BUB_LN6      bub_ln6.voc  0     0    0    0    0
+definesound BUB_LN7      bub_ln7.voc  0     0    0    0    0
+definesound BUB_PIK1     bub_pik1.voc 0     0    0    0    0
+definesound BUB_PIK2     bub_pik2.voc 0     0    0    0    0
+definesound BUB_PISS     bub_piss.voc 0     0    0    0    0
+
+definesound REDNECK2     redneck2.voc 0     0    0    0    0
+definesound XATRIX       xatrix.voc   0     0    0    0    0
+definesound SBFINAL      sb_final.voc 0     0    0    0    0
+
+definesound E1L1         e1l1.voc     0     0    0    0    0
+definesound E1L2         e1l2.voc     0     0    0    0    0
+definesound E1L3         e1l3.voc     0     0    0    0    0
+definesound E1L4         e1l4.voc     0     0    0    0    0
+definesound E1L5         e1l5.voc     0     0    0    0    0
+definesound E1L6         e1l6.voc     0     0    0    0    0
+definesound E1L7         e1l7.voc     0     0    0    0    0
+definesound E2L1         e2l1.voc     0     0    0    0    0
+definesound E2L2         e2l2.voc     0     0    0    0    0
+definesound E2L3         e2l3.voc     0     0    0    0    0
+definesound E2L4         e2l4.voc     0     0    0    0    0
+definesound E2L5         e2l5.voc     0     0    0    0    0
+definesound E2L6         e2l6.voc     0     0    0    0    0
+definesound E2L7         e2l7.voc     0     0    0    0    0
+

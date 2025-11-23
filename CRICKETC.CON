@@ -1,0 +1,145 @@
+// The Crickets, etc.
+// By Arthur Attila Donavan
+
+// Local Defines
+define LESSTHAN 0
+define GRTRTHAN 1
+
+// Define actions
+action ASOUNDFX  0 1 1 1 1
+action ASOUNDFX1 0 1 1 1 45
+
+// Define movements
+move SOUNDFXSTOP
+
+// Define AI states
+ai AICRICKETS1 ASOUNDFX  SOUNDFXSTOP
+ai AICRICKETS2 ASOUNDFX  SOUNDFXSTOP
+ai AIWSCREAM1  ASOUNDFX  SOUNDFXSTOP
+ai AIWSCREAM2  ASOUNDFX  SOUNDFXSTOP
+ai AIWSCREAM3  ASOUNDFX  SOUNDFXSTOP
+ai AICLOCKCHM  ASOUNDFX1 SOUNDFXSTOP
+// ai AIJUKEBOX   ASOUNDFX  SOUNDFXSTOP
+ai AIVX_FINAL  ASOUNDFX1 SOUNDFXSTOP
+
+// States (subroutines) ******************************
+
+// Actors ********************************************
+
+// Main code for Cricket.
+actor SOUNDFX 10
+  ifaction 0
+  {
+    ifsoundid CRICKET1
+    {
+      cstator 1
+      ai AICRICKETS1
+    }
+    ifsoundid CRICKET2
+    {
+      cstator 1
+      ai AICRICKETS1
+    }
+    else ifsoundid SCREAM_F
+    {
+      ai AIWSCREAM1
+    }
+    else ifsoundid CLOCKCHM
+    {
+      ai AICLOCKCHM
+      soundtagonce
+    }
+/*
+    else ifsoundid JUKEBOX
+    {
+      cstator 257
+//      cstator 32768
+      ai AIJUKEBOX
+    }
+*/
+    else ifsoundid VX_FINAL
+    {
+      ai AIVX_FINAL
+      soundtagonce
+    }
+  } // end ifaction 0
+
+  ifai AICRICKETS1            // Crickets
+  {
+    ifsounddist LESSTHAN
+      ai AICRICKETS2
+    else
+      ifrnd 32
+        soundtagonce
+  }
+  else ifai AICRICKETS2
+  {
+    ifsounddist LESSTHAN
+      nullop
+    else
+    {
+      ifactioncount 255
+        ifrnd 32
+          ai AICRICKETS1
+    }
+  }
+  else ifai AIWSCREAM1        // Woman scream - Trap
+  {
+    ifsounddist LESSTHAN
+      ifrnd 24
+        ai AIWSCREAM2
+  }
+  else ifai AIWSCREAM2        // Trapped - Play sound
+  {
+    ifactioncount 32
+    {
+      soundtagonce
+      ai AIWSCREAM3
+    }
+  }
+  else ifai AIWSCREAM3        // Wait before reset of action
+  {
+    ifsounddist GRTRTHAN
+      ai AIWSCREAM1
+  }
+  else ifai AICLOCKCHM
+  {
+    ifactioncount 512
+    {
+      soundtagonce
+      resetactioncount
+    }
+  }
+/*
+  else ifai AIJUKEBOX
+  {
+    ifactioncount 10
+    {
+      soundtagonce
+      resetactioncount
+    }
+    ifdead
+    {
+      stopsound JUKEBOX
+      killit
+    }
+  }
+*/
+  else ifai AIVX_FINAL
+  {
+    ifactioncount 28
+      killit
+  }
+
+  ifhitweapon
+  {
+    ifdead
+    {
+      ifwasweapon RADIUSEXPLOSION
+      {
+          killit
+      }
+    }
+  }
+enda
+

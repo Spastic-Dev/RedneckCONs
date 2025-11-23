@@ -1,0 +1,116 @@
+/* tornado */
+
+action ATORNADO      0  4  1  1  4
+
+move TORNADO_RUN        72
+move TORNADO_RUN_FAST   128
+move TORNADO_RUN_FAST2  256
+
+ai AIATORNADO1  ATORNADO TORNADO_RUN geth
+ai AIATORNADO2  ATORNADO TORNADO_RUN_FAST geth
+ai AIATORNADO3  ATORNADO TORNADO_RUN spin
+ai AIATORNADO4  ATORNADO TORNADO_RUN_FAST geth
+
+ai AIATORNADO5  ATORNADO TORNADO_RUN_FAST2 faceplayer
+ai AIATORNADO6  ATORNADO TORNADO_RUN_FAST fleeenemy
+
+actor TORNADO MEGASTRENGTH
+  fall
+  tearitup
+  ifaction 0 {
+    ifspritepal 33
+    {
+      ai AIATORNADO5
+    }
+    else
+    {
+      ai AIATORNADO1
+    }
+  }
+
+  ifpdistl 16384
+  {
+    soundonce TORNADOSND
+  }
+
+  ifpdistl 2048
+  {
+    soundonce YEHAA16
+    ifrnd 128
+    {
+      addphealth -3
+      larrybird
+    }
+    else
+    {
+      addphealth -3
+      wackplayer
+    }
+  }
+
+  ifai AIATORNADO1
+  {
+    ifactioncount 20
+    {
+      ifrnd 16
+        {
+          ai AIATORNADO2
+          resetactioncount
+        }
+    }
+  }
+  else
+    ifai AIATORNADO2
+    {
+      ifactioncount 20
+      {
+        ifrnd 16
+        {
+          ai AIATORNADO3
+          resetactioncount
+        }
+      }
+    }
+  else
+    ifai AIATORNADO3
+    {
+      ifactioncount 20
+      {
+        ifrnd 16
+        {
+          ai AIATORNADO4
+          resetactioncount
+        }
+      }
+    }
+  else
+    ifai AIATORNADO4
+    {
+      ifactioncount 20
+      {
+        ifrnd 16
+        {
+          ai AIATORNADO1
+          resetactioncount
+        }
+      }
+    }
+  else
+    ifai AIATORNADO5
+    {
+      ifrnd 32
+      {
+        ai AIATORNADO6
+        resetactioncount
+      }
+    }
+ else
+    ifai AIATORNADO6
+    {
+      ifactioncount 20
+      {
+        ai AIATORNADO5
+        resetactioncount
+      }
+    }
+enda

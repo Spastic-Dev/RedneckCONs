@@ -1,0 +1,245 @@
+// Junkyard Maddog
+// By Arthur Attila Donavan
+
+// Define actions
+action ADOG_LEAP1    -200  3  5  1  10
+action ADOG_LEAP2    -190  4  5  1  10
+action ADOG_RUN         0  7  5  1   5
+action ADOG_DIE1       35  2  1  1  10
+action ADOG_DIE2       37  7  1  1  10
+action ADOG_DEAD       43  1  1  1  20
+action ADOG_BARK       45  7  5  1  15
+
+// Define movements
+move DOG_RUNVEL 200
+move DOG_JUMPVEL 100
+move DOG_DIEVEL -120
+move DOG_STOP
+
+// Define AI states
+ai AIDOG_LEAP1   ADOG_LEAP1    DOG_JUMPVEL jumptoplayer
+ai AIDOG_LEAP2   ADOG_LEAP2    DOG_JUMPVEL faceplayer // geth getv
+ai AIDOG_RUN     ADOG_RUN      DOG_RUNVEL  randomangle
+ai AIDOG_ATTACK  ADOG_RUN      DOG_RUNVEL  faceplayerslow
+ai AIDOG_HUNT    ADOG_RUN      DOG_RUNVEL  seekplayer
+ai AIDOG_PAIN    ADOG_RUN      DOG_RUNVEL  fleeenemy
+ai AIDOG_DIE1    ADOG_DIE1     DOG_STOP
+ai AIDOG_DIE2    ADOG_DIE2     DOG_DIEVEL  faceplayer
+ai AIDOG_DEAD    ADOG_DEAD     DOG_STOP    faceplayer
+ai AIDOG_BARK    ADOG_BARK     DOG_STOP    faceplayer
+
+// States (subroutines) ******************************
+state dog_bark_snd
+{
+  ifrnd 128
+    soundonce DG_BARK1
+  else
+    soundonce DG_BARK2
+}
+ends
+
+// Actors ********************************************
+actor DOGRUN 200 ADOG_RUN
+  fall
+
+  ifai 0
+  {
+    cstator 257
+    ai AIDOG_RUN
+  }
+
+  ifai AIDOG_RUN
+  {
+    ifcansee
+      ai AIDOG_ATTACK
+  }
+  else ifai AIDOG_ATTACK
+  {
+    ifrnd 4
+    {
+      ifrnd 128
+      {
+        state dog_bark_snd
+      }
+      else
+      {
+        ifrnd 128
+          soundonce DG_GRWL1
+        else
+          soundonce DG_GRWL2
+      }
+    }
+    ifcansee
+    {
+      ifcanshoottarget
+      {
+        ifpdistl 800
+          ai AIDOG_BARK
+        else ifpdistl 1700
+        {
+          ifai AIDOG_ATTACK
+            nullop
+          else
+            ai AIDOG_ATTACK
+        }
+        else ifpdistl 1900
+          ifrnd 128
+            ai AIDOG_LEAP1
+      }
+    }
+    else ifgapzl 32
+    {
+      ai AIDOG_HUNT
+    }
+    else
+    {
+      ai AIDOG_LEAP1
+    }
+  }
+  else ifai AIDOG_HUNT
+  {
+    ifcansee
+      ai AIDOG_ATTACK
+  }
+  else ifai AIDOG_LEAP1
+  {
+    ifcount 2
+      nullop
+    else ifcount 1
+    {
+      ifrnd 128
+        soundonce DG_LUNGE
+      else
+        state dog_bark_snd
+    }
+    ifactioncount 3
+      ai AIDOG_LEAP2
+  }
+  else ifai AIDOG_LEAP2
+  {
+    ifactioncount 4
+      ai AIDOG_RUN
+    ifpdistl 1000
+    {
+      move DOG_STOP
+      ifrnd 32
+      {
+        addphealth -10
+        state lnsndpain
+      }
+    }
+  }
+  else ifai AIDOG_BARK
+  {
+    ifcount 5
+      ifcount 10
+        nullop
+      else ifcount 9
+        state dog_bark_snd
+    else ifcount 4
+      state dog_bark_snd
+    ifactioncount 6
+    {
+      ifactioncount 7
+        ai AIDOG_ATTACK
+    }
+    else ifactioncount 5
+    {
+      ifrnd 128
+      {
+        addphealth -10
+        state lnsndpain
+      }
+    }
+
+  }
+  else ifai AIDOG_PAIN
+  {
+    ifcount 2
+      nullop
+    else ifcount 1
+      ifrnd 128
+        soundonce DG_YELP
+    ifactioncount 5
+    {
+      ifrnd 32
+      {
+        ifcansee
+        {
+          ai AIDOG_ATTACK
+        }
+      }
+    }
+  }
+  else ifai AIDOG_DIE1
+  {
+    ifactioncount 2
+    {
+      ai AIDOG_DIE2
+      ifrnd 128
+        soundonce DG_DIE
+    }
+  }
+  else ifai AIDOG_DIE2
+  {
+    ifactioncount 7
+    {
+      ifrnd 64
+        spawn BLOODPOOL
+      state bf
+      iffloordistl 8
+        sound THUD
+      ai AIDOG_DEAD
+    }
+  }
+  else ifai AIDOG_DEAD
+  {
+    cstat 0
+    strength 0
+    ifhitweapon
+      ifwasweapon RADIUSEXPLOSION
+      {
+        move DOG_STOP
+        addkills 1
+        sound SQUISHED
+        guts JIBS2 1
+        guts JIBS3 2
+        guts JIBS4 3
+        guts JIBS5 2
+        guts JIBS6 3
+        killit
+      }
+  }
+
+  ifhitweapon
+  {
+    state random_wall_jibs
+    spawn BLOOD
+    ifdead
+    {
+      ifai AIDOG_DEAD
+        nullop
+      else ifai AIDOG_DIE1
+        nullop
+      else ifai AIDOG_DIE2
+        nullop
+      else
+        ai AIDOG_DIE1
+    }
+    else
+    {
+      ifai AIDOG_LEAP1
+        nullop
+      else ifai AIDOG_LEAP2
+        nullop
+      else ifai AIDOG_PAIN
+        nullop
+      else
+      {
+        ifrnd 128
+          ai AIDOG_PAIN
+      }
+    }
+  }
+enda
+

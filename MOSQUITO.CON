@@ -1,0 +1,180 @@
+// Mosquito AI
+
+action MOSQUITOFRAMES   0   6   1   1   11
+action MOSQUITOSCREAM   0   6   1   1   11
+
+// move MOSQUITORUNVELS   128  64
+// move MOSQUITORUNUPVELS 128 -64
+// move MOSQUITOBULLVELS  252 -64
+move MOSQUITORUNVELS    86  64
+move MOSQUITORUNUPVELS  86 -64
+move MOSQUITOBULLVELS  186 -64
+move MOSQUITOBACKWARDS -64 -64
+move MOSQUITORISE       32 -32
+move MOSQUITOSTOPPED   -16
+
+// MOSQUITO
+define MOSQDAMAGE    -4
+
+ai AIMOSQUITOGETE     MOSQUITOSCREAM MOSQUITORUNVELS   faceplayerslow getv
+ai AIMOSQUITOWAIT     MOSQUITOFRAMES MOSQUITOSTOPPED   faceplayerslow
+ai AIMOSQUITOGETUP    MOSQUITOSCREAM MOSQUITORUNUPVELS faceplayer getv
+ai AIMOSQUITOPULLBACK MOSQUITOFRAMES MOSQUITOBACKWARDS faceplayerslow
+ai AIMOSQUITOHIT      MOSQUITOSCREAM MOSQUITOBACKWARDS faceplayer
+ai AIMOSQUITODODGE    MOSQUITOFRAMES MOSQUITOBULLVELS  dodgebullet geth
+ai AIMOSQUITODODGEUP  MOSQUITOFRAMES MOSQUITORISE      getv geth
+
+state MOSQUITOdead
+  addkills 1
+  guts JIBS1 1
+  killit
+ends
+
+state checkMOSQUITOhitstate
+
+  ifdead
+    state MOSQUITOdead
+  else ifsquished
+    state MOSQUITOdead
+  else
+  {
+     ai AIMOSQUITOGETE
+  }
+ends
+
+state checkMOSQUITOnearplayer
+   ifp palive
+   {
+     // sound mosquito sound
+     // ifrnd 16
+       // sound  MOSQUI4
+
+     // if close to player, NN out of 256
+     // mosquito inflicts damage on player
+     ifpdistl 1596
+     {
+        ifrnd 128
+          sound MOSQUI4
+
+        ifpdistl 864
+        {
+            ifcansee
+            {
+              ifrnd 64
+              {
+                addphealth MOSQDAMAGE
+                state lnsndpain
+              }
+            }
+        }
+     }
+   }
+
+ends
+
+state MOSQUITOgetstate
+  ifrnd 192
+  {
+    ifcansee
+    {
+      ifmove MOSQUITOBULLVELS
+      {
+        ifcount 64
+          ai AIMOSQUITOPULLBACK
+        else
+          ifnotmoving
+            ifcount 16
+              ai AIMOSQUITOPULLBACK
+      }
+      else
+        ifcount 32
+      {
+        ifp phigher
+          move MOSQUITOBULLVELS geth getv
+        else
+          move MOSQUITOBULLVELS geth
+      }
+    }
+  }
+  else ifrnd 64  // NN out of 256 check if near player
+     state checkMOSQUITOnearplayer
+ends
+
+state MOSQUITOdodgestate
+  ifai AIMOSQUITODODGEUP
+  {
+     ifcount 10
+       ai AIMOSQUITOGETE
+     else
+       ifnotmoving
+         ai AIMOSQUITOGETE
+  }
+  else
+  {
+    ifcount 10
+      ai AIMOSQUITOGETE
+    else
+      ifnotmoving
+        ai AIMOSQUITOGETE
+  }
+ends
+
+actor MOSQUITO MOSQUITOSTRENGTH MOSQUITOFRAMES
+
+  // cstat 256
+  cstat 258
+//  state checkMOSQUITOnearplayer
+
+  ifp palive
+    nullop
+  else
+    killit
+
+  ifrnd 2
+    fall
+
+  ifaction MOSQUITOFRAMES
+    ai AIMOSQUITOGETE
+  else ifai AIMOSQUITOWAIT
+  {
+    ifactioncount 4
+      ifrnd 16
+        ifcansee
+        {
+           ifrnd 8
+             sound MOSQUI4
+           ifp phigher
+              ai AIMOSQUITOGETUP
+           else
+              ai AIMOSQUITOGETE
+        }
+  }
+  else ifai AIMOSQUITOGETE
+    state MOSQUITOgetstate
+  else ifai AIMOSQUITOGETUP
+    state MOSQUITOgetstate
+  else ifai AIMOSQUITOPULLBACK
+  {
+    ifcount 32
+      ai AIMOSQUITOWAIT
+  }
+  else ifai AIMOSQUITOHIT
+  {
+    ifcount 10
+      ai AIMOSQUITOWAIT
+  }
+  else
+    ifai AIMOSQUITODODGE
+      state MOSQUITOdodgestate
+  else
+    ifai AIMOSQUITODODGEUP
+      state MOSQUITOdodgestate
+
+  ifhitweapon
+    state checkMOSQUITOhitstate
+
+
+enda
+
+
+

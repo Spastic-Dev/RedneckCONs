@@ -1,0 +1,214 @@
+
+action ACOWSTNDFWD    0   5  5  1 26
+action ACOWSTNDREV   15   5  5 -1 26
+action ACOWFALL1     20   2  1  1 20
+action ACOWFALL2     22   4  1  1 20
+action ACOWONGRND    25   1  1  1  1
+action ACOWHDLOWER   26   6  5  1 35
+action ACOWHDRAISE   51   6  5 -1 35
+action ACOWEAT       46   2  5  1 20
+
+action ACOWSCREWEDUP  22   4  1  1 10
+
+move COWSTOP
+
+ai AICOWSTNDFWD   ACOWSTNDFWD   COWSTOP  geth
+ai AICOWSTNDREV   ACOWSTNDREV   COWSTOP  geth
+ai AICOWHDLOWER   ACOWHDLOWER   COWSTOP  geth
+ai AICOWHDRAISE   ACOWHDRAISE   COWSTOP  geth
+ai AICOWEAT       ACOWEAT       COWSTOP  geth
+ai AICOWFALL1     ACOWFALL1     COWSTOP  fleeenemy
+ai AICOWFALL2     ACOWFALL2     COWSTOP  fleeenemy
+ai AICOWSCREWEDUP ACOWSCREWEDUP COWSTOP  fleeenemy
+
+useractor enemy COW COWSTRENGTH ACOWSTNDFWD
+  fall
+
+  ifai 0
+  {
+    cstator 257
+    ai AICOWSTNDFWD
+  }
+  else ifaction ACOWONGRND
+  {
+    // If cows been tipped over
+    strength 0
+    ifhitweapon
+      ifwasweapon RADIUSEXPLOSION
+      {
+        sound SQUISHED
+        guts JIBS2 1
+        guts JIBS3 2
+        guts JIBS4 3
+        guts JIBS5 2
+        guts JIBS6 3
+        killit
+        break
+      }
+  }
+  else
+  {
+    // Randomly make cow sounds
+    ifrnd 1
+    {
+      ifrnd 16
+      {
+        sound COW3
+      }
+      else ifrnd 16
+      {
+        sound COW4
+      }
+      else ifrnd 16
+      {
+        sound COW5
+      }
+      else ifrnd 8
+      {
+        sound COW1
+      }
+      else ifrnd 8
+      {
+        sound COW2
+      }
+      else ifrnd 8
+      {
+        sound COW3
+      }
+    }
+
+    ifai AICOWFALL2
+    {
+      ifactioncount 5
+      {
+        iffloordistl 8
+          sound THUD
+        action ACOWONGRND
+        move COWSTOP
+        break
+      }
+    }
+    else ifai AICOWSCREWEDUP
+    {
+      ifactioncount 255
+      {
+        // cstator 257
+        action ACOWONGRND
+        move COWSTOP
+        break
+      }
+      ifrnd 1
+      {
+        ifrnd 16
+        {
+          sound COW5
+        }
+        else ifrnd 16
+        {
+          sound COW1
+        }
+      }
+    }
+    else ifai AICOWFALL1
+    {
+      ifactioncount 2
+        ai AICOWFALL2
+    }
+
+    // Play the standing frames
+    // forward then backward
+    else ifai AICOWSTNDFWD
+    {
+      // Lower head to eat
+      ifrnd 8
+      {
+        ai AICOWHDLOWER
+        break
+      }
+
+      ifactioncount 2
+        ai AICOWSTNDREV
+    }
+    else ifai AICOWSTNDREV
+    {
+      ifactioncount 2
+        ai AICOWSTNDFWD
+    }
+    else ifai AICOWHDLOWER
+    {
+      ifactioncount 2
+        ai AICOWEAT
+    }
+    else ifai AICOWHDRAISE
+    {
+      // ifactioncount 2
+      ifcount 35
+        ai AICOWSTNDREV
+    }
+    else ifai AICOWEAT
+    {
+      // Raise head
+      ifcount 86
+        ifrnd 16
+        {
+          ai AICOWHDRAISE
+          break
+        }
+    }
+
+  }
+
+  iftipcow
+  {
+    ifactioncount 2
+    {
+      ai AICOWSCREWEDUP
+    }
+    else
+    {
+      sound YEHAA16
+      ai AICOWFALL1
+    }
+
+    ifrnd 128
+      sound COW2
+    else
+      sound COW3
+  }
+
+  ifhitweapon
+  {
+    spawn BLOOD
+    ifdead
+    {
+      addkills 1
+      ifwasweapon RADIUSEXPLOSION
+      {
+        sound SQUISHED
+        guts JIBS2 1
+        guts JIBS3 2
+        guts JIBS4 3
+        guts JIBS5 2
+        guts JIBS6 3
+        killit
+      }
+      else ifwasweapon CROSSBOW
+      {
+        sound SQUISHED
+        guts JIBS2 1
+        guts JIBS3 2
+        guts JIBS4 3
+        guts JIBS5 2
+        guts JIBS6 3
+        killit
+      }
+      else
+      {
+        ifai AICOWSCREWEDUP
+					nullop
+				else
+        	ai AICOWFALL1
+      }
+    }
+  }
+enda

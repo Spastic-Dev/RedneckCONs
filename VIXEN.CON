@@ -1,0 +1,797 @@
+// The Vixen
+// By Arthur Attila Donavan
+
+// Tiles starting positions for Vixen
+// VIXEN      5635  actor - Tile to be used in MAKEMAP
+// VIXENPAIN  5675
+// VIXENDIE   5710
+// VIXENSHOOT 5720
+// VIXENWDN   5740
+// VIXENWUP   5775
+// VIXENKICK  5805
+// VIXENTELE  5845
+// VIXENTEAT  5851
+
+// Local defines
+define VIXENSNDAMB   1
+define GREEN        22  // Green vixen
+define BROWN        15  // Brown vixen
+define BLUE          0  // Blue vixen, gold hair
+define QUEEN        34  // Queen color - light brown
+define SPECIAL      25  // Blue vixen, RED hair
+
+// Define actions
+action AVIXEN_WALK      0  8  5  1  10
+action AVIXEN_RUN       0  8  5  1  10
+action AVIXEN_PAIN     40  7  5  1   8
+action AVIXEN_DIE      75  8  1  1  20
+action AVIXEN_DEAD     82
+action AVIXEN_SHOOT1  100  4  5 -1  20
+action AVIXEN_SHOOT2   85  2  5  1  20
+action AVIXEN_SHOOT3   95  2  5  1  20
+action AVIXEN_WDN     105  7  5  1  15
+action AVIXEN_WUP     140  6  5  1  15
+action AVIXEN_KICK    170  8  5  1  10
+action AVIXEN_JKICK   170  8  5  1  20
+action AVIXEN_TELE1   210  5  1  1  10
+action AVIXEN_TELE2   214  5  1 -1  10
+action AVIXEN_TEAT    216  4  5  1  10
+
+// Define movements
+move VIXEN_WALKVEL   50
+move VIXEN_RUNVEL    80
+move VIXEN_DODGEVEL 200
+move VIXEN_JUMPVEL  300
+move VIXEN_TELEVEL  500
+move VIXEN_STOP
+
+// Define AI states
+ai AIVIXEN_PAUSE  AVIXEN_PAIN   VIXEN_STOP    faceplayer
+ai AIVIXEN_QUEEN1 AVIXEN_PAIN   VIXEN_STOP    faceplayer
+ai AIVIXEN_QUEEN2 AVIXEN_WALK   VIXEN_WALKVEL randomangle
+ai AIVIXEN_QUEEN3 AVIXEN_PAIN   VIXEN_STOP    faceplayer
+ai AIVIXEN_QUEEN4 AVIXEN_WALK   VIXEN_WALKVEL randomangle
+ai AIVIXEN_TAUNT  AVIXEN_PAIN   VIXEN_STOP    faceplayer
+ai AIVIXEN_HUNT   AVIXEN_WALK   VIXEN_WALKVEL randomangle
+ai AIVIXEN_HUNT2  AVIXEN_WALK   VIXEN_WALKVEL fleeenemy
+ai AIVIXEN_HUNT3  AVIXEN_WALK   VIXEN_WALKVEL seekplayer
+ai AIVIXEN_ATTACK AVIXEN_WALK   VIXEN_RUNVEL  faceplayerslow
+ai AIVIXEN_PAIN   AVIXEN_PAIN   VIXEN_STOP    faceplayer
+ai AIVIXEN_DIE    AVIXEN_DIE    VIXEN_STOP
+ai AIVIXEN_DEAD   AVIXEN_DEAD   VIXEN_STOP
+ai AIVIXEN_SHOOT1 AVIXEN_SHOOT1 VIXEN_STOP    faceplayer
+ai AIVIXEN_SHOOT2 AVIXEN_SHOOT2 VIXEN_STOP    faceplayer
+ai AIVIXEN_SHOOT3 AVIXEN_SHOOT3 VIXEN_STOP    faceplayer
+ai AIVIXEN_WDN    AVIXEN_WDN    VIXEN_STOP    faceplayer
+ai AIVIXEN_WUP    AVIXEN_WUP    VIXEN_STOP    faceplayer
+ai AIVIXEN_KICK   AVIXEN_KICK   VIXEN_STOP    faceplayer
+ai AIVIXEN_JKICK  AVIXEN_JKICK  VIXEN_JUMPVEL jumptoplayer
+ai AIVIXEN_TELE1  AVIXEN_TELE1  VIXEN_STOP    faceplayer
+ai AIVIXEN_TELE2  AVIXEN_TELE2  VIXEN_STOP    faceplayer
+ai AIVIXEN_HYPERS AVIXEN_WALK   VIXEN_TELEVEL randomangle
+ai AIVIXEN_TEAT   AVIXEN_TEAT   VIXEN_STOP    faceplayer
+
+// States (subroutines) ******************************
+state vixenattack
+  ifspritepal SPECIAL       // Arthur's signature series
+  {
+    ifpdistl 1600
+      ifrnd 64
+        ifgapzl 64
+        {
+          ai AIVIXEN_KICK
+          break
+        }
+    ifspritepal QUEEN
+    {
+      ifrnd 64
+        ai AIVIXEN_TEAT
+      else ifrnd 85
+        ai AIVIXEN_WDN
+      else ifrnd 128
+        ai AIVIXEN_WUP
+      else
+        ai AIVIXEN_TELE1
+    }
+    else
+    {
+      ifrnd 32
+        ai AIVIXEN_TEAT
+      else ifrnd 85
+        ai AIVIXEN_WDN
+      else ifrnd 85
+        ai AIVIXEN_WUP
+      else
+        ai AIVIXEN_TELE1
+    }
+    break
+  }
+  else ifspritepal GREEN    // Green vixen - base model
+  {
+    ifpdistl 1600
+      ifrnd 128
+        ifgapzl 64
+        {
+          ai AIVIXEN_KICK
+          break
+        }
+    ifrnd 128
+      ai AIVIXEN_SHOOT1
+    else
+      ai AIVIXEN_TELE1
+    break
+  }
+  else ifspritepal QUEEN    // Only the queen can do this
+  {
+    ifpdistl 1600
+    {
+      ifgapzl 64
+      {
+        ai AIVIXEN_KICK
+        break
+      }
+    }
+    else
+      ifrnd 32
+      {
+        ai AIVIXEN_JKICK
+        break
+      }
+  }
+  else ifrnd 128            // All other vixens
+  {
+    ifpdistl 1600
+    {
+      ifgapzl 64
+      {
+        ai AIVIXEN_KICK
+        break
+      }
+    }
+  }
+
+  ifrnd 51
+    ai AIVIXEN_TEAT
+  else ifrnd 64
+    ai AIVIXEN_WDN
+  else ifrnd 85
+    ai AIVIXEN_WUP
+  else ifrnd 128
+    ai AIVIXEN_SHOOT1
+  else
+    ai AIVIXEN_TELE1
+ends
+
+// Sound states below ********************************
+state vixensndambient
+  ifrnd 85
+    soundonce VX_LAFF2
+  else ifrnd 128
+    soundonce VX_LAFF3
+  else
+    soundonce VX_HMMM2
+ends
+
+state vixensnddie
+  ifspritepal QUEEN
+    soundonce VX_DIE7
+  else
+  {
+    ifrnd 64
+      soundonce VX_DIE1
+    else ifrnd 85
+      soundonce VX_DIE4
+    else ifrnd 128
+      soundonce VX_DIE5
+    else
+      soundonce VX_DIE6
+  }
+ends
+
+state vixensndpain
+  ifspritepal SPECIAL
+  {
+    ifrnd 36
+      soundonce VX_OOH
+    else ifrnd 43
+      soundonce VX_PAIN1
+    else ifrnd 51
+      soundonce VX_SEX1
+    else ifrnd 64
+      soundonce VX_SEX2
+    else ifrnd 85
+      soundonce VX_SEX3
+    else ifrnd 128
+      soundonce VX_GRNT
+    else
+      soundonce VX_TAKIT
+  }
+  ifspritepal QUEEN
+  {
+    ifrnd 43
+      soundonce VX_OOH
+    else ifrnd 51
+      soundonce VX_PAIN1
+    else ifrnd 64
+      soundonce VX_SEX1
+    else ifrnd 85
+      soundonce VX_SEX2
+    else ifrnd 128
+      soundonce VX_SEX3
+    else
+      soundonce VX_GRNT
+  }
+  else
+  {
+    ifrnd 51
+      soundonce VX_OOH
+    else ifrnd 64
+      soundonce VX_PAIN1
+    else ifrnd 85
+      soundonce VX_SEX1
+    else ifrnd 128
+      soundonce VX_SEX2
+    else
+      soundonce VX_SEX3
+  }
+ends
+
+state vixensndkick
+  ifspritepal QUEEN
+  {
+    ifrnd 128
+    {
+      ifrnd 64
+        soundonce VX_BABY2
+      else ifrnd 85
+        soundonce VX_MHMM
+      else ifrnd 128
+        soundonce VX_ITSOK
+      else
+        soundonce VX_HURT2
+    }
+    else
+    {
+      ifrnd 64
+        soundonce VX_KICK3
+      else ifrnd 85
+        soundonce VX_KICK2
+      else ifrnd 128
+        soundonce VX_HIYA
+      else
+        soundonce VX_HIYA2
+    }
+  }
+  else
+  {
+    ifrnd 128
+    {
+      ifrnd 85
+        soundonce VX_HURT2
+      else ifrnd 128
+        soundonce VX_BABY2
+      else
+        soundonce VX_MHMM
+    }
+    else
+    {
+      ifrnd 85
+        soundonce VX_KICK3
+      else ifrnd 128
+        soundonce VX_KICK2
+      else
+        soundonce VX_HIYA
+    }
+  }
+ends
+
+state vixensndtpout         // Teleport out
+//  ifrnd 128
+//    soundonce VX_TPOT1
+//  else
+    soundonce VX_TPOT4
+ends
+
+state vixensndtpin          // Telsport in
+  ifrnd 128
+    soundonce VX_TPIN2
+  else
+    soundonce VX_TPIN4
+ends
+
+state vixensndrecog         // First quip when woken up
+  ifspritepal QUEEN
+  {
+    ifrnd 128
+      soundonce VX_CLSR2
+    else
+      soundonce VX_BITE
+  }
+  else
+  {
+    ifrnd 64
+      soundonce VX_BRNG3
+    else ifrnd 85
+      soundonce VX_CLSR1
+    else ifrnd 128
+      soundonce VX_BRING
+    else
+      soundonce VX_2FAR
+  }
+ends
+
+// Actors ********************************************
+actor VIXEN VIXEN_STRENGTH AVIXEN_WALK
+  fall
+
+  ifai 0
+  {
+    cstator 257
+
+    ifspritepal GREEN        // Green vixen - Base model
+      strength 500
+    else ifspritepal BROWN   // Brown vixen - Level 2
+      strength 750
+    else ifspritepal BLUE    // Blue vixen - Level 3
+      strength 1000
+    else ifspritepal QUEEN   // Queen vixen - Oh boy...
+      strength 3000
+    else ifspritepal SPECIAL // Special vixen - Arthur's signature series
+      strength 2000
+
+    ifspritepal QUEEN
+    {
+      ai AIVIXEN_QUEEN1
+    }
+    else
+    {
+      ai AIVIXEN_PAUSE
+      state vixensndrecog
+    }
+  }
+
+  ifai AIVIXEN_HUNT
+  {
+    ifrnd VIXENSNDAMB
+      state vixensndambient
+    ifcansee
+    {
+      ifrnd 4
+        ai AIVIXEN_ATTACK
+      else
+        ai AIVIXEN_HUNT2
+    }
+    else
+      ai AIVIXEN_HUNT3
+  }
+  else ifai AIVIXEN_HUNT2
+  {
+    ifrnd 32
+    {
+      ifcansee
+        ai AIVIXEN_ATTACK
+      else
+        ai AIVIXEN_HUNT3
+    }
+  }
+  else ifai AIVIXEN_HUNT3
+  {
+    ifrnd VIXENSNDAMB
+      state vixensndambient
+    ifcansee
+      ifcanshoottarget
+        ai AIVIXEN_ATTACK
+  }
+  else ifai AIVIXEN_ATTACK        // Vixen attack *****************************
+  {
+    ifrnd VIXENSNDAMB
+      state vixensndambient
+    ifactioncount 8
+    {
+      ifcansee
+        state vixenattack
+
+      ifactorhealthl 50
+      {
+        ifrnd 192
+          ai AIVIXEN_TELE1
+      }
+      else ifactorhealthl 100
+      {
+        ifrnd 128
+          ai AIVIXEN_TELE1
+      }
+      else ifactorhealthl 400
+      {
+        ifrnd 64
+          ai AIVIXEN_TELE1
+      }
+    }
+  }
+  else ifai AIVIXEN_TEAT          // Vixen shoot, type teat *******************
+  {
+    ifrnd VIXENSNDAMB
+      state vixensndambient
+    ifspritepal BROWN        // Brown vixen - Level 2
+    {
+      ifactioncount 10
+        ai AIVIXEN_HUNT
+    }
+    else ifactioncount 20
+    {
+      ifspritepal QUEEN
+        ai AIVIXEN_TELE1
+      else
+        ai AIVIXEN_HUNT
+    }
+    ifcount 7
+      ifcount 17
+        nullop
+      else ifcount 16
+      {
+        sound CASUL_FIRE
+        shoot RIFLE
+        resetcount
+      }
+    else ifcount 6
+    {
+      sound CASUL_FIRE
+      shoot RIFLE
+//      resetcount
+    }
+  }
+  else ifai AIVIXEN_TELE1         // Vixen start teleport *********************
+  {
+    cstat 3                       // Make semi-transparent, and not hit
+    ifcount 2
+    {
+      ifactioncount 5
+      {
+        ai AIVIXEN_HYPERS
+        cstator 32768               // Make invisible
+      }
+    }
+    else ifcount 1
+    {
+      ifrnd 64
+        state vixensndtpout
+    }
+  }
+  else ifai AIVIXEN_HYPERS
+  {
+    ifactioncount 5
+      ai AIVIXEN_TELE2
+  }
+  else ifai AIVIXEN_TELE2
+  {
+    cstat 3                       // Make semi-transparent, and no hit
+    ifcount 2
+    {
+      ifactioncount 5
+      {
+        cstat 257                   // Make solid, and allow hits
+        state vixenattack
+      }
+    }
+    else ifcount 1
+    {
+      ifrnd 64
+        state vixensndtpin
+    }
+  }
+  else ifai AIVIXEN_KICK          // Do a kik kik *****************************
+  {
+    ifcount 2
+      nullop
+    else ifcount 1
+    {
+      ifrnd 64
+        state vixensndkick
+    }
+
+    ifactioncount 8
+    {
+      ai AIVIXEN_HUNT
+    }
+    ifcount 6
+      nullop
+    else ifcount 5
+    {
+      ifpdistl 1800
+      {
+        sound KICK_HIT
+        slapplayer
+        addphealth VIXENWACKAMOUNT
+      }
+    }
+  }
+  else ifai AIVIXEN_JKICK         // Do a jumping kick ************************
+  {
+    ifactioncount 8
+    {
+      ifrnd 128
+        ai AIVIXEN_HUNT
+      else
+        ai AIVIXEN_HUNT2
+    }
+    ifcount 21
+      nullop
+    else ifcount 20
+    {
+      ifpdistl 1800
+      {
+        sound KICK_HIT
+        wackplayer
+        addphealth VIXENWACKAMOUNT
+      }
+    }
+  }
+  else ifai AIVIXEN_WUP           // Vixen shoot, type whip overhanded ********
+  {
+    ifcount 2
+      nullop
+    else ifcount 1
+    {
+      ifrnd 64
+        soundonce VX_HIYA
+    }
+
+    ifactioncount 6
+    {
+      ifrnd 128
+        ai AIVIXEN_WDN
+      else ifspritepal QUEEN
+        ai AIVIXEN_TELE1
+      else
+        ai AIVIXEN_HUNT
+    }
+    ifspritepal BROWN        // Brown vixen - Level 2
+    {
+      ifcount 11
+        nullop
+      else
+        ifcount 9
+        {
+          shoot OWHIP
+        }
+    }
+    else ifcount 13
+      nullop
+    else
+    {
+      ifcount 9
+      {
+        shoot OWHIP
+      }
+    }
+  }
+  else ifai AIVIXEN_WDN           // Vixen shoot, type whip underhanded *******
+  {
+    ifcount 2
+      nullop
+    else ifcount 1
+    {
+      ifrnd 64
+        soundonce VX_HIYA2
+    }
+
+    ifactioncount 7
+    {
+      ifrnd 128
+        ai AIVIXEN_WUP
+      else ifspritepal QUEEN
+        ai AIVIXEN_TELE1
+      else
+        ai AIVIXEN_HUNT
+    }
+    ifspritepal BROWN        // Brown vixen - Level 2
+    {
+      ifcount 11
+        nullop
+      else
+        ifcount 9
+        {
+          shoot UWHIP
+        }
+    }
+    else ifcount 13
+    {
+      nullop
+    }
+    else ifcount 9
+    {
+      shoot UWHIP
+    }
+  }
+  else ifai AIVIXEN_SHOOT1        // Vixen shoot, type DILDO ******************
+  {
+    ifrnd VIXENSNDAMB
+      state vixensndambient
+    ifactioncount 4
+      ai AIVIXEN_SHOOT2
+  }
+  else ifai AIVIXEN_SHOOT2
+  {
+    ifrnd VIXENSNDAMB
+      state vixensndambient
+    ifspritepal BROWN        // Brown vixen - Level 2
+    {
+      ifactioncount 6
+        ai AIVIXEN_SHOOT3
+    }
+    else ifactioncount 12
+    {
+      ai AIVIXEN_SHOOT3
+    }
+    ifcount 10
+    {
+      shoot DILDO
+      resetcount
+    }
+  }
+  else ifai AIVIXEN_SHOOT3
+  {
+    ifrnd VIXENSNDAMB
+      state vixensndambient
+    ifactioncount 2
+      ifspritepal QUEEN
+        ai AIVIXEN_TELE1
+      else
+        ai AIVIXEN_HUNT
+  }
+  else ifai AIVIXEN_PAIN          // Show pain ********************************
+  {
+    ifactioncount 7
+    {
+      state vixenattack
+    }
+  }
+  else ifai AIVIXEN_DIE           // Vixen dieing *****************************
+  {
+    ifactioncount 8
+    {
+      ifrnd 64
+        spawn BLOODPOOL
+      state bf
+      iffloordistl 8
+        sound THUD
+      ai AIVIXEN_DEAD
+    }
+  }
+  else ifai AIVIXEN_DEAD          // Vixen dead *******************************
+  {
+    strength 0
+    ifhitweapon
+    {
+      ifspritepal SPECIAL
+        nullop
+      ifspritepal QUEEN
+        nullop
+      else ifwasweapon RADIUSEXPLOSION
+      {
+        move VIXEN_STOP
+        addkills 1
+        sound SQUISHED
+        guts JIBS2 1
+        guts JIBS3 2
+        guts JIBS4 3
+        guts JIBS5 2
+        guts JIBS6 3
+        state jib_sounds
+        killit
+      }
+    }
+    ifspritepal QUEEN
+      endofgame 2
+    break
+  }
+  else ifai AIVIXEN_PAUSE
+  {
+    ifactioncount 14
+      ai AIVIXEN_HUNT
+  }
+  else ifai AIVIXEN_QUEEN1
+  {
+    ifactioncount 21
+      ai AIVIXEN_QUEEN2
+  }
+  else ifai AIVIXEN_QUEEN2
+  {
+    ifactioncount 24
+      ai AIVIXEN_QUEEN3
+  }
+  else ifai AIVIXEN_QUEEN3
+  {
+    ifactioncount 21
+      ai AIVIXEN_QUEEN4
+  }
+  else ifai AIVIXEN_QUEEN4
+  {
+    ifactioncount 16
+      ai AIVIXEN_PAUSE
+  }
+  else ifai AIVIXEN_TAUNT
+  {
+    ifcount 25
+      nullop
+    else ifcount 24
+      soundonce VX_ISTHT
+
+    ifp pdead
+      nullop
+    else
+    {
+      ifcount 2
+      {
+        ifcount 100
+        {
+          ifcount 200
+            nullop
+          else ifcount 199
+            resetcount
+        }
+        else ifcount 99
+          quote 50
+      }
+      else ifcount 1
+        quote 49
+    }
+  }
+
+  ifhitweapon
+  {
+    state random_wall_jibs
+    spawn BLOOD
+    ifdead
+    {
+      ifai AIVIXEN_DEAD
+        nullop
+      else ifai AIVIXEN_DIE
+        nullop
+      else
+      {
+        state vixensnddie
+        ai AIVIXEN_DIE
+      }
+    }
+    else
+    {
+      ifai AIVIXEN_PAIN
+        nullop
+      else
+      {
+        ifrnd 64
+        {
+          ifspritepal QUEEN
+          {
+            state vixensndpain
+            state vixenattack
+          }
+          else
+          {
+            ai AIVIXEN_PAIN
+            ifspritepal SPECIAL
+              state vixensndpain
+            else ifrnd 64
+              state vixensndpain
+          }
+        }
+      }
+    }
+  }
+
+  // If the player is dead, and the vixen is not dead, then taunt the player
+  ifp pdead
+  {
+    ifdead
+      break
+    else
+    {
+      ifai AIVIXEN_TAUNT
+        nullop
+      else
+        ai AIVIXEN_TAUNT
+    }
+  }
+
+enda

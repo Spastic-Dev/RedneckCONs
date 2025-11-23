@@ -1,0 +1,557 @@
+/* BILLY RAY */
+
+// BILLYWALK       4096
+// BILLYDIE        4136
+// BILLYCOCK       4147
+// BILLYRAY        4162
+// BILLYSHOOT      4162
+// BILLYRAYSTAYPUT 4163
+// BILLYBUT        4188
+// BILLYSCRATCH    4191
+// BILLYSNIFF      4195
+// BILLYWOUND      4202
+// BILLYGORE       4228
+// BILLYRAYAMBUSH  4250
+
+// Define actions
+action ABILLYWALK      -66   8  5  1 11
+action ABILLYRUN       -66   8  5  1 11
+action ABILLYSHOOT       0   5  5  1 28
+action ABILLYCOCK      -15   3  5  1 26
+action ABILLYSTAND       0   1  1  1 40
+action ABILLYDYING     -26  11  1  1 11
+action ABILLYHIT        40   5  5  1 26
+action ABILLYDEAD      -16   1  1  1  1
+action ABILLYTRKDEAD    71   1  1  1  1
+action ABILLYITCH       26   3  1  1 18
+action ABILLYSCRATCH    29   3  1  1 18
+action ABILLYSNIFF      32   7  1  1 11
+action ABILLYJIBONE     66   1  1  1  1
+action ABILLYJIBTWO     66   5  1  1 12
+action ABILLYJIBDEAD    70   1  1  1  1
+
+// Define movements
+move BILLYWALKVELS 72
+move BILLYRUNVELS 108
+move BILLYSTOPPED
+
+// Define AI states
+ai AIBILLYSEEKENEMY  ABILLYWALK    BILLYWALKVELS seekplayer
+ai AIBILLYSHOOTENEMY ABILLYSHOOT   BILLYSTOPPED  faceplayer
+ai AIBILLYFLEEENEMY  ABILLYWALK    BILLYWALKVELS fleeenemy
+ai AIBILLYSHOOT      ABILLYSHOOT   BILLYSTOPPED  faceplayer
+ai AIBILLYDODGE      ABILLYRUN     BILLYRUNVELS  dodgebullet
+ai AIBILLYCHARGE     ABILLYRUN     BILLYRUNVELS  seekplayer
+ai AIBILLYDYING      ABILLYDYING   BILLYSTOPPED  faceplayer
+ai AIBILLYTRKDYING   ABILLYDYING   BILLYSTOPPED  faceplayer
+ai AIBILLYHIT        ABILLYHIT     BILLYSTOPPED  faceplayer
+ai AIBILLYITCH       ABILLYITCH    BILLYSTOPPED  faceplayer
+ai AIBILLYSCRATCH    ABILLYSCRATCH BILLYSTOPPED  faceplayer
+ai AIBILLYSNIFF      ABILLYSNIFF   BILLYSTOPPED  faceplayer
+ai AIBILLYJIBONE     ABILLYJIBONE  BILLYSTOPPED  faceplayer
+ai AIBILLYJIBTWO     ABILLYJIBTWO  BILLYSTOPPED  faceplayer
+
+
+// States (subroutines) ******************************
+state billy_jibs
+  guts JIBS2 1
+  guts JIBS3 2
+  guts JIBS4 3
+  guts BILLYJIBA 1
+  guts BILLYJIBB 2
+  ifrnd 6
+  {
+    guts JIBS1 1
+    spawn BLOODPOOL
+  }         // spine
+  state jib_sounds
+ends
+
+state billyitchstate
+  ifcount 18
+  {
+    ai AIBILLYSCRATCH
+    sound BR_SCRTH
+  }
+ends
+
+state billyscratchstate
+  ifactioncount 18
+  {
+      ai AIBILLYSNIFF
+      sound BR_SNIFF
+  }
+ends
+
+state billysniffstate
+  ifcount 18
+  {
+    ai AIBILLYSEEKENEMY
+  }
+ends
+
+
+state billyseekenemystate
+  ifactornotstayput
+  {
+     // Billy with set pal num 31 and 32
+     //  shoot less and seek more (32 is also deaf)
+     ifspritepal 31
+     {
+        ifrnd 8
+        {
+          ifp palive
+            ifcansee
+              ifcanshoottarget
+            {
+              ai AIBILLYSHOOTENEMY
+              break
+            }
+        }
+     }
+     else ifspritepal 32
+     {
+        ifrnd 8
+        {
+          ifp palive
+            ifcansee
+              ifcanshoottarget
+            {
+              ai AIBILLYSHOOTENEMY
+              break
+            }
+        }
+     }
+     // NN out of 256 times, if player is alive and billy can
+     // see player, switch ai to shoot
+     else ifrnd 32
+     {
+       ifp palive
+         ifcansee
+           ifcanshoottarget
+           {
+             ai AIBILLYSHOOTENEMY
+             break
+           }
+     }
+     else ifrnd 32
+     {
+        ifpdistg 3084
+        {
+          ai AIBILLYSEEKENEMY
+          break
+        }
+     }
+
+     // NN out of 256 times, if we get down here in
+     // the code and we're not moving
+     // try opening a door to find player
+     ifrnd 8
+       ifnotmoving
+         operate
+
+  }
+  // Else Billy Ray confined to home sector
+  else
+  {
+    ifrnd 32
+      ifp palive
+        ifcansee
+          ifcanshoottarget
+        {
+          ai AIBILLYSHOOTENEMY
+          break
+        }
+
+    ifcount 48
+    {
+      ifrnd 8
+        ifp palive
+          ifcansee
+            ifcanshoottarget
+          {
+            ifrnd 192
+              ai AIBILLYSHOOTENEMY
+            else
+              ai AIBILLYFLEEENEMY
+            break
+          }
+    }
+  }
+ends
+
+
+state billyshootenemystate
+    {
+
+        ifrnd 2
+          ifrnd 16
+          {
+              ai AIBILLYSCRATCH
+              break
+          }
+
+        // Logic means when count = 12, and ifcanshoottarget
+        //    shoot SHOTGUN
+        ifcount 12
+            { }
+        else ifcount 11
+        {
+          ifcansee
+            ifcanshoottarget
+            {
+              sound SHOT6
+              shoot SHOTGUN
+              shoot SHOTGUN
+              shoot SHOTGUN
+              shoot SHOTGUN
+              shoot SHOTGUN
+            }
+            else
+                ai AIBILLYSEEKENEMY
+        }
+
+        // Logic means when count = 25, cock shotgun
+        ifcount 25
+            { }
+        else ifcount 24
+        {
+            action ABILLYCOCK
+            sound GUNCHANG
+
+        }
+
+        // Billy with set pal num 31 and 32
+        //  shoot less and seek more (32 is also deaf)
+        ifcount 46
+            { }
+        else ifcount 45
+        {
+            ifspritepal 31
+            {
+                action ABILLYWALK
+                ifpdistl 768
+                    ai AIBILLYFLEEENEMY
+                else
+                    ai AIBILLYSEEKENEMY
+                break
+            }
+            else ifspritepal 32
+            {
+                action ABILLYWALK
+                ifpdistl 768
+                    ai AIBILLYFLEEENEMY
+                else
+                    ai AIBILLYSEEKENEMY
+                break
+            }
+        }
+
+        // Logic means when count = 48, and ifcanshoottarget
+        //    shoot SHOTGUN
+        ifcount 48
+            { }
+        else ifcount 47
+        {
+          ifcansee
+            ifcanshoottarget
+            {
+                sound SHOT6
+                shoot SHOTGUN
+                shoot SHOTGUN
+                shoot SHOTGUN
+                shoot SHOTGUN
+                shoot SHOTGUN
+            }
+            else
+                ai AIBILLYSEEKENEMY
+        }
+
+        // Logic means when count = 60, cock shotgun
+        ifcount 60
+        { }
+        else ifcount 59
+        {
+            action ABILLYCOCK
+            sound GUNCHANG
+        }
+
+        // Logic means when count > 72,
+        // NN out of 256 times resetcount
+        // else either flee, or seek enemy
+        ifcount 72
+        {
+            ifrnd 64
+                resetcount
+            else
+            {
+                ifpdistl 768
+                    ai AIBILLYFLEEENEMY
+                else
+                    ai AIBILLYSEEKENEMY
+                break
+            }
+        }
+
+        ifaction ABILLYCOCK
+            ifactioncount 2
+                action ABILLYSHOOT
+
+
+    }
+ends
+
+state billyfleeenemystate
+  ifactioncount 8
+  {
+    ifrnd 32
+    {
+      ai AIBILLYITCH
+      sound BR_ITCH
+    }
+    else
+      ai AIBILLYSEEKENEMY
+  }
+  else
+    ifnotmoving
+      ai AIBILLYITCH
+ends
+
+state checkbillyhitstate
+  spawn BLOOD
+  ifdead
+  {
+    state random_wall_jibs
+    // state drop_shotgun
+    addkills 1
+    ifwasweapon SHOTGUN
+    {
+      state drop_shotgun
+    }
+    ifwasweapon SHOTSPARK1
+    {
+      state drop_shotgun
+    }
+    ifwasweapon RIFLE
+    {
+      state drop_shotgun
+    }
+    ifwasweapon CIRCLESAW {
+      state drop_shotgun
+    }
+    ifwasweapon RADIUSEXPLOSION
+    {
+       state drop_shotgun
+       sound SQUISHED
+       spawn BLOODPOOL
+       state nf
+       ai AIBILLYJIBONE
+       state billy_jibs
+       state jib_sounds
+       break
+    }
+    else
+      ifwasweapon CROSSBOW
+      {
+        state drop_shotgun
+        sound SQUISHED
+        state billy_jibs
+        killit
+      }
+    else
+    {
+      ai AIBILLYDYING
+    }
+    sound BR_DTH
+  }
+  else
+  {
+    sound BR_PAIN
+    state random_wall_jibs
+
+    ifrnd 64
+        ai AIBILLYHIT
+    else
+      ifrnd 64
+        ai AIBILLYSHOOTENEMY
+    else
+      ifrnd 64
+      {
+        ai AIBILLYFLEEENEMY
+        action ABILLYWALK
+      }
+  }
+ends
+
+state billydyingstate
+  ifactioncount 11
+  {
+    ifrnd 64
+      spawn BLOODPOOL
+    state bf
+    iffloordistl 8
+      sound THUD
+    action ABILLYDEAD
+    move BILLYSTOPPED
+    break
+  }
+ends
+
+state billytrkdyingstate
+  ifactioncount 5
+  {
+    spawn BLOODPOOL
+    state nf
+    iffloordistl 8
+      sound THUD
+    action ABILLYTRKDEAD
+    move BILLYSTOPPED
+    break
+  }
+ends
+
+state billyjibbedstate
+  ifai AIBILLYJIBTWO
+    ifactioncount 5
+    {
+      iffloordistl 8
+        sound THUD
+      action ABILLYJIBDEAD
+      move BILLYSTOPPED
+      break
+    }
+ends
+
+// Actors ********************************************
+actor BILLYRAYSTAYPUT BILLYRAYSTRENGTH ABILLYSTAND
+  ai AIBILLYSEEKENEMY
+  cactor BILLYRAY
+enda
+
+actor BILLYRAY BILLYRAYSTRENGTH ABILLYSTAND
+  fall
+
+  state checksquished
+  ifaction ABILLYSTAND
+    ai AIBILLYSEEKENEMY
+  else ifaction ABILLYDEAD
+  {
+    strength 0
+    ifhitweapon
+      ifwasweapon RADIUSEXPLOSION
+      {
+        sound SQUISHED
+        state billy_jibs
+        killit
+      }
+    break
+  }
+  else ifaction ABILLYJIBONE
+  {
+    strength 0
+
+    ifactioncount 30
+    {
+      ai AIBILLYJIBTWO
+      break
+    }
+    ifhitweapon
+      ifwasweapon RADIUSEXPLOSION
+      {
+        sound SQUISHED
+        state billy_jibs
+        killit
+      }
+      break
+  }
+  else ifaction ABILLYJIBDEAD
+  {
+    strength 0
+    ifhitweapon
+      ifwasweapon RADIUSEXPLOSION
+      {
+        sound SQUISHED
+        state billy_jibs
+        killit
+      }
+      break
+  }
+  else ifaction ABILLYTRKDEAD
+  {
+    strength 0
+    ifhitweapon
+      ifwasweapon RADIUSEXPLOSION
+      {
+        sound SQUISHED
+        state billy_jibs
+        killit
+      }
+      break
+  }
+  else ifai AIBILLYDYING
+    state billydyingstate
+  else ifai AIBILLYTRKDYING
+    state billytrkdyingstate
+  else ifai AIBILLYJIBONE
+    state billyjibbedstate
+  else ifai AIBILLYJIBTWO
+    state billyjibbedstate
+  else ifai AIBILLYHIT
+  {
+    ifactioncount 3
+    ai AIBILLYSEEKENEMY
+  }
+  else
+  {
+    ifai AIBILLYSEEKENEMY
+      state billyseekenemystate
+    else ifai AIBILLYDODGE
+      state billyseekenemystate
+    else ifai AIBILLYSHOOTENEMY
+      state billyshootenemystate
+    else ifai AIBILLYFLEEENEMY
+      state billyfleeenemystate
+    else ifai AIBILLYCHARGE
+      state billyseekenemystate
+    else ifai AIBILLYITCH
+    {
+      ifcount 18
+      {
+        ai AIBILLYSCRATCH
+        sound BR_SCRTH
+      }
+    }
+//      state billyitchstate
+    else ifai AIBILLYSCRATCH
+      state billyscratchstate
+    else ifai AIBILLYSNIFF
+    {
+      ifcount 18
+      {
+        ai AIBILLYSEEKENEMY
+      }
+    }
+//    state billysniffstate
+
+    ifhittruck
+    {
+      ai AIBILLYTRKDYING
+      break
+    }
+    else ifhitweapon
+      state checkbillyhitstate
+
+    ifrnd 1
+    {
+      ifrnd 32
+        soundonce BR_ROAM1
+      else ifrnd 64
+        soundonce BR_ROAM2
+      else
+        soundonce BR_ROAM3
+    }
+
+  }
+enda
+
+
