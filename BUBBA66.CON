@@ -1,0 +1,299 @@
+// Bubba - Brother of Leonard (of dubious paternal origins)
+// By Arthur Attila Donavan
+
+// Tiles starting positions for Bubba
+// BUBBASCRATCH         4464
+// BUBBANOSE            4476
+// BUBBAPISS            4487
+// BUBBASTAND           4504
+// BUBBAOUCH            4506
+// BUBBADIE             4513
+// BUBBADEAD            4523
+
+// Define actions
+action ABUBBA_SCRATCH1 -40  5  1  1  20
+action ABUBBA_SCRATCH2 -35  2  1  1  20
+action ABUBBA_SCRATCH3 -33  2  1  1  20
+action ABUBBA_SCRATCH4 -31  2  1  1  20
+action ABUBBA_SCRATCH5 -32  1  1  1  20
+action ABUBBA_NOSE1    -28  2  1  1  20
+action ABUBBA_NOSE2    -26  2  1  1  20
+action ABUBBA_NOSE3    -24  4  1  1  20
+action ABUBBA_NOSE4    -20  2  1  1  20
+action ABUBBA_NOSE5    -21  1  1  1  20
+action ABUBBA_PISS     -17 17  1  1  20
+action ABUBBA_STAND      0  1  1  1  20
+action ABUBBA_PAIN       2  6  1  1  20
+action ABUBBA_DIE        9 11  1  1  20
+action ABUBBA_DEAD      19  1  1  1  20
+
+// Define movements
+move BUBBA_STOP
+
+// Define AI states
+ai AIBUBBA_SCRATCH ABUBBA_SCRATCH1 BUBBA_STOP faceplayer
+ai AIBUBBA_NOSE    ABUBBA_NOSE1    BUBBA_STOP faceplayer
+ai AIBUBBA_PISS    ABUBBA_PISS     BUBBA_STOP faceplayer
+ai AIBUBBA_STAND   ABUBBA_STAND    BUBBA_STOP faceplayer
+ai AIBUBBA_PAIN    ABUBBA_PAIN     BUBBA_STOP faceplayer
+ai AIBUBBA_WACKED  ABUBBA_PAIN     BUBBA_STOP faceplayer
+ai AIBUBBA_DIE     ABUBBA_DIE      BUBBA_STOP faceplayer
+ai AIBUBBA_DEAD    ABUBBA_DEAD     BUBBA_STOP faceplayer
+
+// States (subroutines) ******************************
+state bubsndpain
+  ifrnd 64
+    soundonce BUB_HRT1
+  else ifrnd 85
+    soundonce BUB_HRT2
+  else ifrnd 128
+    soundonce BUB_HRT3
+  else
+    soundonce BUB_HRT4
+ends
+
+state bubsndpick
+  ifrnd 128
+    soundonce BUB_PIK1
+  else
+    soundonce BUB_PIK2
+ends
+
+state bubsndcall
+  ifrnd 31
+    soundonce BUB_HEY1
+  else ifrnd 36
+    soundonce BUB_HEY2
+  else ifrnd 43
+    soundonce BUB_LN1
+  else ifrnd 51
+    soundonce BUB_LN2
+  else ifrnd 64
+    soundonce BUB_LN3
+  else ifrnd 85
+    soundonce BUB_LN5
+  else ifrnd 128
+    soundonce BUB_LN6
+  else
+    soundonce BUB_LN7
+ends
+
+/*
+state bubsndpain
+  ifrnd
+    soundonce
+  else ifrnd
+    soundonce
+  else
+    soundonce
+ends
+*/
+
+state bubbanose
+  ifaction ABUBBA_NOSE1
+  {
+    ifactioncount 2
+      action ABUBBA_NOSE2
+  }
+  else ifaction ABUBBA_NOSE2
+  {
+    ifactioncount 8
+      action ABUBBA_NOSE3
+  }
+  else ifaction ABUBBA_NOSE3
+  {
+    ifactioncount 2
+    {
+      action ABUBBA_NOSE4
+      state bubsndcall
+    }
+  }
+  else ifaction ABUBBA_NOSE4
+  {
+    ifactioncount 6
+      action ABUBBA_NOSE5
+  }
+  else ifaction ABUBBA_NOSE5
+  {
+    ifactioncount 1
+      ai AIBUBBA_STAND
+  }
+ends
+
+state bubbascratch
+  ifaction ABUBBA_SCRATCH1
+  {
+    ifactioncount 5
+      action ABUBBA_SCRATCH2
+  }
+  else ifaction ABUBBA_SCRATCH2
+  {
+    ifactioncount 8
+      action ABUBBA_SCRATCH3
+  }
+  else ifaction ABUBBA_SCRATCH3
+  {
+    ifactioncount 2
+    {
+      action ABUBBA_SCRATCH4
+      state bubsndcall
+    }
+  }
+  else ifaction ABUBBA_SCRATCH4
+  {
+    ifactioncount 6
+      action ABUBBA_SCRATCH5
+  }
+  else ifaction ABUBBA_SCRATCH5
+  {
+    ifactioncount 1
+      ai AIBUBBA_STAND
+  }
+ends
+
+// Actors ********************************************
+actor BUBBASTAND 100
+  fall
+
+  ifai 0
+  {
+    cstator 257
+    sizeto 16 16
+    ai AIBUBBA_PISS
+    soundonce BUB_PISS
+  }
+
+  ifai AIBUBBA_PAIN
+  {
+    ifactioncount 6
+      ai AIBUBBA_STAND
+  }
+  else ifai AIBUBBA_SCRATCH
+  {
+    state bubbascratch
+  }
+  else ifai AIBUBBA_NOSE
+  {
+    state bubbanose
+  }
+  else ifai AIBUBBA_PISS
+  {
+    ifactioncount 17
+      ai AIBUBBA_STAND
+  }
+  else ifai AIBUBBA_STAND
+  {
+    ifrnd 128
+    {
+      ai AIBUBBA_NOSE
+      state bubsndpick
+    }
+    else
+      ai AIBUBBA_SCRATCH
+  }
+  else ifai AIBUBBA_WACKED
+  {
+    nullop
+    /*
+    ifactioncount 7
+    { nullop }
+    else
+    ifactioncount 6
+    {
+      ifspritepal 3
+      {
+        endofgame 2
+        killit
+      }
+      else
+      {
+       smackbubba
+       break
+      }
+    }
+    */
+  }
+  else ifai AIBUBBA_DIE
+  {
+    ifactioncount 5
+    {
+      ifactioncount 11
+      {
+        ifrnd 64
+          spawn BLOODPOOL
+        state bf
+        iffloordistl 8
+          sound THUD
+        ai AIBUBBA_DEAD
+      }
+    }
+    else ifactioncount 4
+      soundonce THUD
+  }
+  else ifai AIBUBBA_DEAD
+  {
+    cstat 0
+    strength 0
+    addphealth -1000
+    ifhitweapon
+      ifwasweapon RADIUSEXPLOSION
+      {
+        move BUBBA_STOP
+        addkills 1
+        sound SQUISHED
+        guts JIBS2 1
+        guts JIBS3 2
+        guts JIBS4 3
+        guts JIBS5 2
+        guts JIBS6 3
+        killit
+      }
+    break
+  }
+
+  ifhitweapon
+  {
+    state random_wall_jibs
+    spawn BLOOD
+    ifcoop
+      strength 100
+    ifdead
+    {
+      ifai AIBUBBA_DEAD
+        nullop
+      else ifai AIBUBBA_DIE
+        nullop
+      else
+        ai AIBUBBA_DIE
+    }
+    else
+    {
+      ifwasweapon CROWBAR
+      {
+	ifspritepal 3
+	{
+          endofgame 2
+          killit
+        }
+        else
+        {
+          smackbubba
+          // ai AIBUBBA_WACKED
+          state bubsndpain
+          break
+        }
+      }
+      ifai AIBUBBA_PAIN
+        nullop
+      else
+      {
+        ai AIBUBBA_PAIN
+        state bubsndpain
+      }
+    }
+  }
+enda
+
+/*
+ifspritepal 3 
+*/

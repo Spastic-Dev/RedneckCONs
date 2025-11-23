@@ -1,0 +1,206 @@
+// THE NEW GATOR INFO STARTS HERE
+// The "GATOR" 
+// By Douglas William Wolf
+// *WKA*FreezeMan
+
+define GATOR 5980
+define GATOR_STRENGHT 100
+
+define GATOR_BITE -5
+define GATOR_GOOD_BITE -10
+
+
+
+action AGATORATTACK   50   4  5  1  15
+action AGATORWALK     80   4  5  1  35
+action AGATORRUN      80   4  5  1  20
+action AGATORWAIT      0   8  5  1  20
+
+
+move GATORWALKVEL 10
+move GATORRUNVEL  30
+move GATORSTOP
+
+ai AIGATORWALK    AGATORWALK    GATORWALKVEL  randomangle geth
+ai AIGATORRUN     AGATORRUN     GATORRUNVEL   randomangle geth
+ai AIGATORHUNT    AGATORRUN    GATORRUNVEL   faceplayersmart   
+ai AIGATORATTACK  AGATORATTACK  GATORSTOP     faceplayer
+ai AIGATORLOOK    AGATORWAIT    GATORSTOP     seekplayer
+ai AIGATORBITE    AGATORATTACK  GATORSTOP     faceplayer
+
+
+
+
+
+
+
+
+
+
+
+// Main code for GAOTR.
+useractor enemy GATOR GATOR_STRENGHT sizeto 18 18
+  fall
+
+  ifai 0
+  {
+    cstator 257
+    ai AIGATORWALK
+  }
+  ifpdistl 8192
+  {
+    ifrnd 32
+      soundonce GATORIDLE
+  }
+  ifai AIGATORWALK
+  
+     {
+
+    
+     
+      soundonce GATORIDLE
+      
+    ifp palive
+     {
+    ifpdistl 1199
+      {
+        ai AIGATORBITE
+       }
+      }
+    else
+     {
+    // Gator walking
+    ifactioncount 34
+      ifrnd 32
+      {
+        ai AIGATORLOOK
+        resetactioncount
+        
+      }
+     }
+   }
+  else ifai AIGATORLOOK
+  {
+     ifpdistl 1399
+     
+      {
+      ifp palive
+      {
+        ai AIGATORBITE
+       }
+     }  
+    else
+     {
+    // Gator Looking around
+   
+    ifactioncount 20
+      ifrnd 8
+      {
+        ai AIGATORRUN
+        resetactioncount
+        soundonce GATORIDLE
+      }
+    }
+  }
+
+  else ifai AIGATORRUN
+  {
+    // GATOR RUN
+    ifactioncount 10
+    {
+      ai AIGATORWALK
+      
+    }
+  }
+  
+  else ifai AIGATORHUNT
+  {
+    // Gator hunting for player
+    ifcansee
+    {
+     soundonce GATORIDLE
+      ifpdistl 1169
+      {
+        ai AIGATORATTACK
+      }
+    }
+    else
+      ifrnd 4
+        ai AIGATORLOOK
+  }
+  else ifai AIGATORBITE
+  {
+    // Gator bite player
+    ifp palive
+    {
+      ifpdistl 1399
+      {
+        ifrnd 8
+        {
+          addphealth GATOR_BITE
+          state lnsndpain
+        }
+        ifrnd 128
+          soundonce GATORBITE
+        else
+          soundonce GATORBITE
+      }
+      else
+        ai AIGATORLOOK
+    }
+    else
+      ai AIGATORWALK
+  }
+
+  else ifai AIGATORATTACK
+  {
+    // Gator attacking player
+    ifp palive
+    {
+      ifpdistl 1249
+      {
+        ifrnd 8
+        {
+          addphealth GATOR_GOOD_BITE
+          state lnsndpain
+        }
+        ifrnd 128
+          soundonce GATORBITE
+        else
+          soundonce GATORBITE
+      }
+      else
+        ai AIGATORHUNT
+    }
+    else
+      ai AIGATORWALK
+  }
+
+  
+
+  ifhitweapon
+  {
+    spawn BLOOD
+    ifdead
+    {
+      move GATORSTOP
+      addkills 1
+       sound SQUISHED
+       sound GATORBITE
+      guts JIBS2 1
+      guts JIBS3 2
+      guts JIBS4 3
+      guts JIBS5 2
+      guts JIBS6 3
+      killit
+    }
+    else
+    {
+      
+      ai AIGATORHUNT
+    }
+  }
+enda
+
+
+

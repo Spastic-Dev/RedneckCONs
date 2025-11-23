@@ -1,0 +1,884 @@
+
+define SECTOREFFECTOR       1
+define ACTIVATOR            2
+define TOUCHPLATE           3
+define ACTIVATORLOCKED      4
+define MUSICANDSFX          5
+define LOCATORS             6
+define CYCLER               7
+define MASTERSWITCH         8
+define RESPAWN              9
+define GPSPEED              10
+define JAILDOOR             11
+define LNRDTAG              15
+define SIGN1                16
+define SIGN2                17
+define FIRSTGUNSPRITE       21
+define RIFLESPRITE          22
+define CROSSBOWSPRITE       23
+define TEATGUN              24
+define BUZSAWSPRITE         25
+define DYNAMITE             26
+define POWDERKEGSPRITE      27
+define SHOTGUNSPRITE        28
+define ALIENARMGUN          29
+define HEALTHBOX            30
+define AMMOBOX              31
+define TEATAMMO             32
+define INVENTORYBOX         33
+define DOORKEYS             34
+define LIGHTNIN             35
+define DESTRUCTO            36
+define AMMO                 40
+define RIFLEAMMO            41
+define ALIENBLASTERAMMO     42
+define BLADEAMMO            43
+define HBOMBAMMO            47
+define SHOTGUNAMMO          49
+define BEER                 51
+define PORKBALLS            52
+define WHISKEY              53
+define MOONSHINE            55
+define SNORKLE              56
+define COWPIE               57
+define DOORKEY              60
+define BOOTS                61
+define MINECARTKILLER       67
+define SHADESECTOR          68
+define SOUNDFX              71
+define FANSPRITE            211
+define FANSPRITEBROKE       215
+define GRATE1               234
+define BGRATE1              235
+define WATERDRIP            239
+define WATERBUBBLE          240
+define WATERBUBBLEMAKER     241
+define LIGHTSWITCH2         250
+define UFOBEAM              252
+define BOULDER              256
+define BOULDER1             264
+define BIGFNTCURSOR         512
+define SMALLFNTCURSOR       513
+define STARTALPHANUM        514
+define ENDALPHANUM          607
+define BIGALPHANUM          632
+define BIGPERIOD            694
+define BIGCOMMA             695
+define BIGX                 696
+define BIGQ                 697
+define BIGSEMI              698
+define BIGCOLIN             699
+define THREEBYFIVE          702
+define BIGAPPOS             714
+define MINIFONT             718
+define RESPAWNMARKERRED     866
+define GLASS                1056
+define GLASS2               1057
+define CRACK1               1075
+define CRACK2               1076
+define CRACK3               1077
+define CRACK4               1078
+define FOOTPRINTS           1079
+define MIRROR               1089
+define FOOTPRINTS2          1144
+define FOOTPRINTS3          1145
+define FOOTPRINTS4          1146
+define SLIME                1161
+define BOUNCEMINE           1204
+define BULLETHOLE           1212
+define GLASSPIECES          1256
+define BOTTLE12             1282
+define BOTTLE13             1283
+define BOTTLE14             1284
+define BOTTLE15             1285
+define BOTTLE16             1286
+define BOTTLE17             1287
+define BOTTLE18             1288
+define VENDMACHINE          1291
+define VENDMACHINEBROKE     1293
+define COLAMACHINE          1294
+define COLAMACHINEBROKE     1296
+define BLOODPOOL            1303
+define FEATHERS             1310
+define BANNER               1313
+define SEENINE              1324
+define SEENINEDEAD          1325
+define TRANSPORTERBEAM      1338
+define WATERSPLASH2         1383
+define BLOOD                1391
+define TRANSPORTERSTAR      1398
+define MORTER               1416
+define MUD                  1420
+define RADIUSEXPLOSION      1426
+define FORCERIPPLE          1427
+define EXPLOSION2           1441
+define EXPLOSION3           1442
+define JIBS1                1463
+define JIBS2                1468
+define JIBS3                1473
+define JIBS4                1478
+define JIBS5                1483
+define BURNING              1494
+define FIRE                 1495
+define JIBS6                1515
+define BLOODSPLAT1          1525
+define BLOODSPLAT3          1526
+define BLOODSPLAT2          1527
+define BLOODSPLAT4          1528
+define OOZ                  1529
+define WALLBLOOD1           1530
+define WALLBLOOD2           1531
+define WALLBLOOD3           1532
+define WALLBLOOD4           1533
+define WALLBLOOD5           1534
+define WALLBLOOD6           1535
+define WALLBLOOD7           1536
+define WALLBLOOD8           1537
+define OOZ2                 1538
+define BURNING2             1539
+define FIRE2                1540
+define SMALLSMOKE           1554
+define SMALLSMOKEMAKER      1555
+define SCRAP6               1595
+define SCRAP1               1605
+define SCRAP2               1609
+define SCRAP3               1613
+define SCRAP4               1617
+define SCRAP5               1621
+define F1HELP               1633
+define MENUSCREEN           1641
+define MENUBAR              1642
+define KILLSICON            1643
+define WHISHKEY_ICON        1645
+define BOTTOMSTATUSBAR      1647
+define BOOT_ICON            1648
+define FRAGBAR              1650
+define COWPIE_ICON          1652
+define SNORKLE_ICON         1653
+define MOONSHINE_ICON       1654
+define ACCESS_ICON          1656
+define DIGITALNUM           1657
+define SLIDEBAR             1674
+define WINDOWBORDER1        1679
+define TEXTBOX              1680
+define WINDOWBORDER2        1681
+define INGAMELNRDTHREEDEE   1684
+define TENSCREEN            1685
+define NEWCROSSHAIR         1689
+define CROSSHAIR            1692
+define SHELL                1702
+define SHOTSPARK1           1764
+define CROSSBOW             1774
+define TORNADO              1930
+define TIKILAMP             1990
+define POPCORN              2021
+define TESLACON             2056
+define TESLABALL            2094
+define DILDO                2095
+define TESLA                2097
+define LOCKSWITCH1          2224
+define EXPLOSION2BOT        2272
+define VIEWBORDER           2520
+define ORDERING             2531
+define TEXTSTORY            2541
+define LOADSCREEN           2542
+define TOILETPAPER          2864
+define BUSTAWIN5A           2878
+define BUSTAWIN5B           2879
+define BUSTAWIN4A           2898
+define BUSTAWIN4B           2899
+define FRAMEEFFECT1         2999
+define NEWPISTOL            3328
+define NEWPISTOLCOCK        3336
+define NEWCROWBAR           3340
+define CROWBAR              NEWCROWBAR
+define NEWSHOTGUN           3350
+define SHOTGUN              NEWSHOTGUN
+define NEWDYNAMITE          3360
+define RIFLE                3380
+define CIRCLESTUCK          3388
+define SHITBALL             3390
+define BUZSAW               3395
+define CIRCLESAW            3400
+define LUMBERBLADE          3411
+define FIRELASER            3420
+define BOWLINGBALL          3430
+define BOWLINGBALLSPRITE    3437
+define OWHIP                3471
+define UWHIP                3475
+define APLAYER              3845
+define PLAYERONWATER        3860
+define LNYDLADDER           3975
+define LNRDLYINGDEAD        3998
+define LNRDGUN              4041
+define LNRDTORSO            4046
+define DOGATTACK            4060
+define BILLYWALK            4096
+define BILLYDIE             4137
+define BILLYCOCK            4147
+define BILLYRAY             4162
+define BILLYSHOOT           4162
+define BILLYRAYSTAYPUT      4163
+define BILLYBUT             4188
+define BILLYSCRATCH         4191
+define BILLYSNIFF           4195
+define BILLYWOUND           4202
+define BILLYGORE            4228
+define BILLYJIBA            4235
+define BILLYJIBB            4244
+define DOGRUN               4260
+define DOGDIE               4295
+define DOGDEAD              4303
+define DOGBARK              4305
+define LTH                  4352
+define LTHSTRAFE            4395
+define LTHLOAD              4430
+define LTHDIE               4456
+define BUBBASCRATCH         4464
+define BUBBANOSE            4476
+define BUBBAPISS            4487
+define BUBBASTAND           4504
+define BUBBAOUCH            4506
+define BUBBADIE             4513
+define BUBBADEAD            4523
+define HULK                 4649
+define HULKSTAYPUT          4650
+define HULKA                4651
+define HULKB                4652
+define HULKC                4653
+define HULKJIBA             4748
+define HULKJIBB             4753
+define HULKJIBC             4758
+define SBSWIPE              4770
+define SBPAIN               4810
+define SBDIE                4820
+define HEN                  4861
+define HENSTAYPUT           4862
+define HENSTAND             4897
+define MOSQUITO             4916
+define PIG                  4945
+define PIGSTAYPUT           4946
+define PIGEAT               4983
+define SBMOVE               5015
+define SBSPIT               5050
+define SBDIP                5085
+define MINION               5120
+define MINIONSTAYPUT        5121
+define UFO1                 5270
+define UFO2                 5274
+define UFO3                 5278
+define UFO4                 5282
+define UFO5                 5286
+define MINJIBA              5290
+define MINJIBB              5295
+define MINJIBC              5300
+define COW                  5317
+define COOT                 5376
+define COOTSTAYPUT          5377
+define COOTSHOOT            5411
+define COOTDIE              5437
+define COOTDUCK             5481
+define COOTPAIN             5548
+define COOTTRANS            5568
+define COOTGETUP            5579
+define ECLAIRHEALTH         5595
+define COOTJIBA             5602
+define COOTJIBB             5607
+define COOTJIBC             5616
+define VIXEN                5635
+define VIXENPAIN            5675
+define VIXENDIE             5710
+define VIXENSHOOT           5720
+define VIXENWDN             5740
+define VIXENWUP             5775
+define VIXENKICK            5805
+define VIXENTELE            5845
+define VIXENTEAT            5851
+
+// These tile positions are reserved!
+define RESERVEDSLOT1        6132
+define RESERVEDSLOT2        6133
+define RESERVEDSLOT3        6134
+define RESERVEDSLOT4        6135
+define RESERVEDSLOT5        6136
+define RESERVEDSLOT6        6137
+define RESERVEDSLOT7        6138
+define RESERVEDSLOT8        6139
+define RESERVEDSLOT9        6140
+define RESERVEDSLOT10       6141
+define RESERVEDSLOT11       6142
+define RESERVEDSLOT12       6143
+
+// Defines weapon, not to be used with the 'shoot' keyword.
+
+define CROWBAR_WEAPON      0
+define CASUL_WEAPON        1
+define SHOTGUN_WEAPON      2
+define RIFLE_WEAPON        3
+define DYNAMITE_WEAPON     4
+define CROSSBOW_WEAPON     5
+define THROWSAW_WEAPON     6
+define ALIENBLASTER_WEAPON 7
+define POWDERKEG_WEAPON    8
+define TEATGUN_WEAPON      9
+define HANDREMOTE_WEAPON   10
+define BUZSAW_WEAPON       11
+define BOWLINGBALL_WEAPON  12
+
+// Defines the motion characteristics of an actor
+define faceplayer       1
+define geth             2
+define getv             4
+define randomangle      8
+define faceplayerslow   16
+define spin             32
+define faceplayersmart  64
+define fleeenemy        128
+define jumptoplayer     257
+define seekplayer       512
+define furthestdir      1024
+define dodgebullet      4096
+
+// Some misc defines
+define NO   0
+define YES  1
+
+// Defines for 'useractor' keyword
+define notenemy     0
+define enemy        1
+define enemystayput 2
+
+// Player Actions.
+define pstanding    1
+define pwalking     2
+define prunning     4
+define pducking     8
+define pfalling     16
+define pjumping     32
+define phigher      64
+define pwalkingback 128
+define prunningback 256
+define pkicking     512
+define pshrunk      1024
+define ponmoonshine 4096
+define ponground    8192
+define palive       16384
+define pdead        32768
+define pfacing      65536
+
+// SOUNDS
+
+define GET_MOONSHINE    0
+define GET_KELVAR       1
+define GET_SCUBA        2
+define GET_BEER         3
+define GET_COWPIE       4
+define GET_KEYS         6
+define GET_WHISKEY      9
+define GET_BOOTS       10
+
+//   ------------ new definitions -------------
+
+define KICK_HIT     0
+define RICOCHET     1
+define BULITHIT     2
+define CASUL_FIRE   3
+define PISCOCK      4
+define PISLOAD      5
+define AK3          6
+define XBOWFIRE     7
+define BUB_HRT1     8
+define XBOWEXPL     9
+define LASERA       10
+define SHRINKER     11
+define CRAPFLOW     12
+define DYNOCLMP     13
+define DYNEW        14
+define CRAPSTIR     15
+define BRICDOOR     16
+define BOMBEXPL     17
+define VENTBUST     18
+define GLASSSND     19
+define GLASSHVY     20
+define BUBBLES      21
+define SPLASH       22
+define BUB_HRT2     23
+define BUB_HRT3     24
+define GASP         25
+define BUB_HRT4     26
+define ONECART      27
+define MINEWIND     28
+define URANUS       29
+define COMPUTER     30
+define NEON         31
+define VX_FINAL     32
+define LN_WAIT      33
+define BUB_LN1      34
+define LN_FINAL     35
+define CLOCKTK      36
+define LN_STANK     37
+define LNRD_GRUNT   38
+define CLOCKCHM     39
+define WETFEET      40
+define LNRD_DEAD    41
+define LAND         42
+define END_PIPE     43
+define ICARUMBA     44
+define BUB_LN2      45
+define LN_CRAP      46
+define ASYAMB       47
+define SCUBA        48
+define TRUCK_LP2    49
+define COW1         50
+define COW2         51
+define COW3         52
+define COW4         53
+define COW5         54
+define BUB_LN3      55
+define HARPSIC      56
+define BUB_LN5      57
+define BUB_LN6      58
+define BUB_LN7      59
+define BUB_PIK1     60
+define BUB_PIK2     61
+define BUB_PISS     62
+define E1L1         63
+define E1L2         64
+define UFOINSID     65
+define LN_RODE      66
+// define <empty>      67
+define FIRE09       68
+define SQUISHED     69
+define TELEPORT     70
+define GBELEV01     71
+define LN_BNCH      72
+define GBELEV02     73
+// define <empty>      74
+define TRUCK_LP     75
+define SWITCH1      76
+define E1L3         77
+define LN_HOTDM     78
+define FLUSH        79
+define E1L4         80
+define QUAKE        81
+define SBFINAL      82
+define MONITORA     83
+// define <empty>      84
+define AS_AMB2      85
+define AS_AMB1      86
+// define <empty>      87
+// define <empty>      88
+// define <empty>      89
+// define <empty>      90
+// define <empty>      91
+define DRIP3        92
+// define <empty>      93
+// define <empty>      94
+define JUKEBOX      95
+define AS_DROPN     96
+define AS_CRYPT     97
+define AS_DRCLS     98
+define LOKGATE      99
+define METLGAT2     100
+define METLGAT1     101
+define E1L5         102
+define E1L6         103
+define E1L7         104
+define E2L1         105
+// define <empty>      106
+define LN_HOLD      107
+define VX_TAKIT     108
+define SHOT6        109
+define CT_LAF2      110
+define CT_GET       111
+define CT_LAF       112
+define CT_PAIN      113
+define CT_DIE       114
+define PIGSOUND1    115
+define PIGSOUND2    116
+define PIGSOUND3    117
+define PIGSOUND4    118
+define PIGSOUND5    119
+define BR_ROAM1     120
+define BR_RECOG     121
+// define <empty>      122
+define BR_PAIN      123
+define BR_DTH       124
+define VX_ISTHT     125
+define LASERH       126
+define PIGSOUND6    127
+define PIGSOUND7    128
+define VX_DIE1      129
+// define VX_DIE2      130
+define VX_DIE4      131
+define VX_DIE5      132
+define VX_DIE6      133
+define VX_DIE7      134
+define VX_OOH       135
+define VX_PAIN1     136
+define VX_SEX1      137
+define VX_SEX2      138
+define VX_SEX3      139
+define VX_GRNT      140
+// define VX_THERE     141
+// define VX_BRNG2     142
+// define VX_CUMON     143
+define VX_BRNG3     144
+define VX_CLSR1     145
+define VX_CLSR2     146
+define VX_2FAR      147
+define GRIND        148
+define VX_BRING     149
+define VX_BITE      150
+// define VX_LAFF1     151
+define VX_LAFF2     152
+define VX_LAFF3     153
+define VX_HMMM2     154
+define VX_HURT2     155
+define VX_BABY2     156
+define VX_MHMM      157
+define THUD         158
+define VX_ITSOK     159
+// define VX_OHYES     160
+// define VX_TPOT1     161
+define VX_TPOT4     162
+// define VX_TPIN1     163
+// define <empty>      164
+define DR_CRK8      165
+define DR_ROLL      166
+// define <empty>      167
+// define <empty>      168
+define GUNCHANG     169
+define FLIES        170
+define AMB_1        171
+define GRAVAMB      172
+define HOOTOWL      173
+define WOODS2       174
+define CATAMB       175
+define E2L2         176
+define E2L3         177
+// define <empty>      178
+// define <empty>      179
+// define <empty>      180
+// define <empty>      181
+// define <empty>      182
+// define <empty>      183
+define CNTAMB       184
+define JUNKAMB2     185
+// define <empty>      186
+// define <empty>      187
+// define <empty>      188
+// define <empty>      189
+// define <empty>      190
+// define <empty>      191
+// define <empty>      192
+// define <empty>      193
+define FIRE_CRACKLE 194
+define BNS_SPCH1    195
+define BNS_SPCH2    196
+define BNS_SPCH3    197
+// define <empty>      198
+define E2L4         198
+define BNS_SPCH4    199
+define LN_LNDHT     200
+// define <empty>      201
+// define <empty>      202
+define LN_BITCH     203
+define CT_LAND      204
+define BR_ROAM2     205
+define LN_HUSH      206
+define LN_PAIN4     207
+define LN_SLOW      208
+define LN_PAIN4A    209
+define JUG          210
+define LN_PAIN8     211
+define MONITOR      212
+// define <empty>      213
+// define <empty>      214
+// define <empty>      215
+define JUGALUG7     216
+define DIDDLP       217
+// define <empty>      218
+// define PISCOCK      219
+// define <empty>      220
+define LN_STINK     221
+define JIBBED1      222
+define JIBBED2      223
+define JIBBED3      224
+define JIBBED4      225
+define JIBBED5      226
+define JIBBED6      227
+define JIBBED7      228
+define LN_BACON     229
+define E2L5         230
+// define <empty>      231
+// define <empty>      232
+// define <empty>      233
+// define <empty>      234
+// define <empty>      235
+// define <empty>      236
+// define <empty>      237
+// define <empty>      238
+// define <empty>      239
+// define <empty>      240
+// define <empty>      241
+// define <empty>      242
+define EXITMENU     243
+// define <empty>      244
+define DSCREM04     245
+define SHRNK_HIT    246
+// define <empty>      247
+define INTOMENU     248
+// define <empty>      249
+// define <empty>      250
+// define <empty>      251
+// define <empty>      252
+define BR_ROAM3     253
+define KILLME       254
+define E2L6         255
+// define <empty>      256
+// define <empty>      257
+// define <empty>      258
+// define <empty>      259
+// define <empty>      260
+// define <empty>      261
+// define <empty>      262
+define JIBBED13     263
+define LN_BBQ       264
+define JIBBED8      265
+define JIBBED9      266
+define JIBBED10     267
+define JIBBED11     268
+define JIBBED12     269
+define LNRD_KILLED4 270
+define LNRD_KILLED5 271
+// define <empty>      272
+// define <empty>      273
+define LN_PAIN2     274
+define LN_PAIN3     275
+// define <empty>      276
+// define <empty>      277
+// define <empty>      278
+// define <empty>      279
+// define <empty>      280
+// define <empty>      281
+// define <empty>      282
+define E2L7         283
+// define <empty>      284
+// define <empty>      285
+// define <empty>      286
+// define <empty>      287
+// define <empty>      288
+// define <empty>      289
+// define <empty>      290
+// define <empty>      291
+// define <empty>      292
+// define <empty>      293
+define WHIPYOU      294
+// define <empty>      295
+// define <empty>      296
+// define <empty>      297
+// define <empty>      298
+// define <empty>      299
+// define <empty>      300
+// define <empty>      301
+// define <empty>      302
+// define <empty>      303
+define LN_PAIN5     304
+define LN_PAIN6     305
+define LN_PAIN7     306
+// define <empty>      307
+// define <empty>      308
+// define <empty>      309
+// define <empty>      310
+// define <empty>      311
+// define <empty>      312
+// define <empty>      313
+// define <empty>      314
+// define <empty>      315
+define HULK_ROAM       316
+define HULK_RECOG      317
+define HULK_ATTACK     318
+define HULK_PAIN       319
+define HULK_DYING      320
+define HULK_SPIT       321
+// define <empty>      322
+// define <empty>      323
+// define <empty>      324
+// define <empty>      325
+// define <empty>      326
+// define <empty>      327
+// define <empty>      328
+// define <empty>      329
+// define <empty>      330
+// define <empty>      331
+// define <empty>      332
+define CRICKET1     333
+define CRICKET2     334
+define PIGRUNT      335
+// define <empty>      336
+// define <empty>      337
+// define <empty>      338
+// define <empty>      339
+// define <empty>      340
+define RESIZE       341
+define VX_TPIN2     342
+define VX_TPIN4     343
+define VX_HLPME     344
+// define VX_THATS     345
+// define <empty>      346
+// define SF_SPEED     347
+define SF_THLAW     348
+define SF_TLAW2     349
+define LN_SCREW     350
+define THUNDER1     351
+define THUNDER2     352
+define THUNDER3     353
+define BOWLSTRT     354
+define BOWLPIN      355
+define BOWLLOOP     356
+// define VX_KICK1     357
+define VX_KICK2     358
+define VX_KICK3     359
+// define VX_KICK4     360
+define VX_HIYA      361
+define VX_HIYA2     362
+define SF_ATTN      363
+define SF_DETH1     364
+define SF_DETH2     365
+define SF_DETH3     366
+// define SF_FREEZ     367
+define SF_FREZ2     368
+define SF_GETYA     369
+define SF_HANDS     370
+// define SF_HEAD      371
+// define SF_HEAR      372
+define SF_HEY       373
+define SF_HOLD      374
+define SF_LAFF1     375
+define LN_FLYOP     376
+define LN_SHTHD     377
+define SF_NAME      378
+define SF_OVER      379
+define SF_PAIN1     380
+define SF_PAIN2     381
+define SF_PAIN3     382
+define SF_RLOAD     383
+define SF_RLOD2     384
+define SF_SHOOT     385
+// define SF_SHOT2     386
+define LN_TIGHT     387
+define DR_CLS       388
+define SCRAPE_1     389
+define YEHAA16      390
+define LN_WHUP      391
+define CHKNFLAP     392
+define CHKN_1       393
+define CHKN_2       394
+define CHIKDETH     395
+define AMB_ROOM     396
+define BR_ITCH      397
+define BR_SCRTH     398
+define BR_SNIFF     399
+define TRUKDIE      400
+define ZIPOPEN      401
+define ZIPPSTRK     402
+define MOSQUI4      403
+define FART1        404
+// define <empty>      405
+define SQUEAKY      406
+define CATDOOR      407
+define JUNKSWCH     408
+define CONVEYR      409
+// define <empty>      410
+// define <empty>      411
+// define <empty>      412
+// define <empty>      413
+// define <empty>      414
+define MN_FREAK     415
+define MN_PN        416
+define MN_REC       417
+define MN_AMB       418
+define LOKDOOR      419
+define VOMIT        420
+define TOSS         421
+define FART2        422
+define FART3        423
+define FART4        424
+define CHUG         425
+define CROWUSH      426
+define WUSSLAF      427
+define LN_CITY      428
+define MUNCH2       429
+define TESLARC      430
+define BUZSAWSND    431
+define ELEVLOOP     432
+define PISSEND      433
+define PISSLOOP     434
+define PISSSTRT     435
+define CRAP         436
+define PEE          437
+define GATORIDLE    438
+define GATORBITE    439
+define SCREAM_F     440
+define SCREAM_M     441
+define WHISPER      442
+define OVEN         443
+define CREMATOR     444
+define TBLSAW       445
+define TBLSAW_X     446
+define FORKLIFT     447
+define PROJECTR     448
+define SIGNROT      449
+define XBOWCOCK     450
+define PWDERKEG     451
+define DG_BARK1     452
+define DG_GRWL1     453
+define DG_YELP      454
+define DG_DIE       455
+define UFO          456
+define UFOLET       457
+define EGG          458
+define HAMCAN       459
+define DROPPIE      460
+define BIGDRILL     461
+define MINECART     462
+define WTRFALL      463
+define SHAFT        464
+define FRIDGEOP     465
+define FRIDGECL     466
+define DG_LUNGE     467
+define TORNADOSND   468
+define FAN          469
+define CRUSHER      470
+define PLUCKER      471
+define SAWHEAD      472
+define STAMPER      473
+define TBLSAW_D     474
+define MORNING      475
+define DG_BARK2     476
+define DG_GRWL2     477
+define REDNECK2     478
+define XATRIX       479
+define SB_ATK1      480
+define SB_ATK2      481
+define SB_CORN      482
+define SB_HRT1      483
+define SB_HRT2      484
+define SB_HRT3      485
+define SB_LAF1      486
+define SB_LAF2      487
+define SB_LORD      488
+define SB_MIN1      489
+define SB_MIN2      490
+define SB_MIN3      491
+define SB_SCK1      492
+define SB_SPT1      493
+define SB_SPT2      494
+define SB_DIE       495
+define SB_IAM       496
+define SB_POO       497
+define BUB_HEY1     498
+define BUB_HEY2     499
+// MAXIMUM NUMBER OF SOUNDS: 500 ( 0-499 ) I recon...
+
